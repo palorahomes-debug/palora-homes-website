@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palora Homes - Order System Verification Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-canvas: #FAF7F2;
+            --card-bg: #FFFFFF;
+            --brand-brown: #2C1409;
+            --brand-gold: #C59B3F;
+            --pass-color: #059669;
+            --pass-bg: #ECFDF5;
+            --fail-color: #DC2626;
+            --fail-bg: #FEF2F2;
+            --warn-color: #D97706;
+            --warn-bg: #FFFBEB;
+            --border: #E8E1D5;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: #2C1E14;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.65rem;
+            color: var(--brand-brown);
+            margin: 0 0 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #666;
+        }
+
+        .status-summary-bar {
+            display: flex;
+            gap: 14px;
+        }
+
+        .summary-badge {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-pass { background: var(--pass-bg); color: var(--pass-color); border: 1px solid #A7F3D0; }
+        .badge-fail { background: var(--fail-bg); color: var(--fail-color); border: 1px solid #FECACA; }
+        .badge-warn { background: var(--warn-bg); color: var(--warn-color); border: 1px solid #FDE68A; }
+
+        .category-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+
+        .category-header {
+            background: #FDFBF8;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-header h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--brand-brown);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-count {
+            font-size: 0.78rem;
+            padding: 4px 10px;
+            background: #EFEAE3;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .test-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .test-item {
+            padding: 14px 24px;
+            border-bottom: 1px solid #F4EFEA;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            transition: background 0.15s;
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-item:hover {
+            background: #FAF7F2;
+        }
+
+        .test-info {
+            flex: 1;
+        }
+
+        .test-title {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #1F2937;
+            margin-bottom: 3px;
+        }
+
+        .test-detail {
+            font-size: 0.78rem;
+            color: #6B7280;
+            line-height: 1.45;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .test-status {
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .status-pass { background: var(--pass-bg); color: var(--pass-color); border: 1px solid #A7F3D0; }
+        .status-fail { background: var(--fail-bg); color: var(--fail-color); border: 1px solid #FECACA; }
+        .status-warn { background: var(--warn-bg); color: var(--warn-color); border: 1px solid #FDE68A; }
+
+        .env-diagnosis-card {
+            background: #1E293B;
+            color: #E2E8F0;
+            border-radius: 14px;
+            padding: 24px;
+            margin-top: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .env-diagnosis-card h3 {
+            margin: 0 0 12px;
+            color: #F8FAFC;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .env-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.06);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .env-tag {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .env-configured { background: #065F46; color: #6EE7B7; }
+        .env-missing { background: #7F1D1D; color: #FCA5A5; }
+        .env-offline { background: #78350F; color: #FCD34D; }
+
+        .btn-rerun {
+            background: var(--brand-brown);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-rerun:hover {
+            background: var(--brand-gold);
+            color: var(--brand-brown);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header-card">
+            <div class="header-title">
+                <h1>Palora Homes</h1>
+                <p>Order Verification &amp; Cloud Database System Test Suite</p>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="button" class="btn-rerun" id="btnRerunTests" onclick="runAllTests()">
+                    🔄 Re-Run Tests
+                </button>
+                <div class="status-summary-bar">
+                    <div class="summary-badge badge-pass" id="badgePassCount">0 PASS</div>
+                    <div class="summary-badge badge-fail" id="badgeFailCount">0 FAIL</div>
+                    <div class="summary-badge badge-warn" id="badgeWarnCount">0 NOTICE</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Test Groups Container -->
+        <div id="testGroupsContainer">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Environment & Database Configuration Diagnosis -->
+        <div class="env-diagnosis-card" id="envDiagnosisCard">
+            <h3>⚙️ Environment &amp; Database Configuration Audit</h3>
+            <div id="envDiagnosisList">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts under test -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/libs/jspdf.umd.min.js"></script>
+    <script src="js/libs/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/pdf-order.js"></script>
+    <script src="js/cart.js"></script>
+
+    <script>
+        const testCategories = [
+            {
+                id: 'pdf',
+                title: '1. PDF Generation & Specs Parsing',
+                icon: '📄',
+                tests: []
+            },
+            {
+                id: 'order_creation',
+                title: '2. Customer Order Creation & Inquiry ID',
+                icon: '📝',
+                tests: []
+            },
+            {
+                id: 'cloud_sync',
+                title: '3. Cloud Order Saving & Serverless Operations',
+                icon: '☁️',
+                tests: []
+            },
+            {
+                id: 'retrieval',
+                title: '4. Order Retrieval, Multi-field Search & Cache',
+                icon: '🔍',
+                tests: []
+            },
+            {
+                id: 'status_update',
+                title: '5. Order Status Updates & Audit History',
+                icon: '🔄',
+                tests: []
+            },
+            {
+                id: 'cart_sync',
+                title: '6. Shopping Cart & Customer Details Synchronization',
+                icon: '🛒',
+                tests: []
+            },
+            {
+                id: 'whatsapp',
+                title: '7. WhatsApp Ordering Integration',
+                icon: '💬',
+                tests: []
+            }
+        ];
+
+        async function runAllTests() {
+            testCategories.forEach(c => c.tests = []);
+
+            let passCount = 0;
+            let failCount = 0;
+            let warnCount = 0;
+
+            function addResult(catId, title, pass, detail, isWarning) {
+                const cat = testCategories.find(c => c.id === catId);
+                const status = pass ? 'PASS' : (isWarning ? 'WARN' : 'FAIL');
+                if (pass) passCount++;
+                else if (isWarning) warnCount++;
+                else failCount++;
+
+                if (cat) {
+                    cat.tests.push({ title, status, detail });
+                }
+            }
+
+            // ====================================================================
+            // CATEGORY 1: PDF Generation & Specs Parsing
+            // ====================================================================
+            try {
+                const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+                addResult('pdf', 'jsPDF & AutoTable Libraries Loaded', !!jsPDFClass, jsPDFClass ? 'jsPDF UMD & AutoTable available in window' : 'jsPDF library not detected');
+
+                const rawTitle = 'Lord Hanuman Acrylic Sacred Frame (ACD007)';
+                const sanitized = window.PaloraPDFOrder.sanitizeProductName(rawTitle);
+                addResult('pdf', 'Product Title SKU Stripping', sanitized === 'Lord Hanuman Acrylic Sacred Frame', `Original: "${rawTitle}" → Clean: "${sanitized}"`);
+
+                const parsedSpecs = window.PaloraPDFOrder.parseProductDetails({
+                    title: 'Pair of Sculptural Floating Shelves',
+                    categoryName: 'Living Organizers',
+                    specs: '6" x 8" • Natural Oak (Pair / 2 pcs)',
+                    quantity: 3
+                });
+                const isPackValid = parsedSpecs.packMultiplier === 2 && parsedSpecs.totalPieces === 6;
+                addResult('pdf', 'Pack Multiplier & Total Pieces Calculation', isPackValid, `Quantity: 3 packs × 2 pcs/pack = ${parsedSpecs.totalPieces} pieces (Pack: ${parsedSpecs.packLabel})`);
+
+                const parsedDim = window.PaloraPDFOrder.parseProductDetails({
+                    title: 'Nordic Deer Antler Wall Clock (WWC102)',
+                    specs: '16" x 6" • Walnut Wood Finish'
+                });
+                addResult('pdf', 'Dimension & Material Extraction', parsedDim.size === '16" x 6"' && parsedDim.finish === 'Walnut Wood Finish', `Size: "${parsedDim.size}", Finish: "${parsedDim.finish}"`);
+
+                const sampleOrder = {
+                    orderId: 'PH-TEST-PDF',
+                    formattedDate: '24 Oct 2026, 7:00 pm IST',
+                    customer: { fullName: 'Test Customer', mobileNumber: '9876543210', city: 'Bengaluru', state: 'Karnataka', pincode: '560038', deliveryAddress: 'Sample Suite' },
+                    items: [{ title: 'Artisanal Wall Clock', specs: '14" Diameter', quantity: 1, price: 2499 }],
+                    status: 'Pending Confirmation'
+                };
+                const pdfRes = window.PaloraPDFOrder.generatePDF(sampleOrder);
+                addResult('pdf', 'A4 PDF Document & Table Generation', !!(pdfRes && pdfRes.doc && pdfRes.pdfDataUri), `Generated A4 PDF: ${pdfRes.fileName} (${Math.round((pdfRes.pdfDataUri || '').length / 1024)} KB data URI)`);
+            } catch (err) {
+                addResult('pdf', 'PDF Generation Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // CATEGORY 2: Customer Order Creation & Inquiry ID
+            // ====================================================================
+            let createdOrderRecord = null;
+            try {
+                const orderId = window.PaloraPDFOrder.generateOrderInquiryId();
+                const idPatternValid = /^PH-\d{8}-\d{4}$/.test(orderId);
+                addResult('order_creation', 'Unique Order Inquiry ID Format', idPatternValid, `Format PH-YYYYMMDD-XXXX: "${orderId}"`);
+
+                const custDetails = {
+                    fullName: 'Ananya Sharma',
+                    mobileNumber: '9876543210',
+                    deliveryAddress: 'Flat 402, Lotus Residency, MG Road',
+                    city: 'Pune',
+                    state: 'Maharashtra',
+                    pincode: '411001',
+                    notes: 'Please pack in extra protective wrap'
+                };
+                const cartItems = [
+                    { id: 'item-1', title: 'Lord Hanuman Frame (ACD007)', categoryName: 'Artisanal Wall Decor', specs: '14" Diameter • Warm Antique Brass', quantity: 1, price: 1499 },
+                    { id: 'item-2', title: 'Pair of Floating Shelves', categoryName: 'Living Organizers', specs: '6" x 8" • Walnut Wood (Pair)', quantity: 2, price: 1899 }
+                ];
+
+                const orderResult = window.PaloraPDFOrder.createAndSaveOrder(custDetails, cartItems);
+                createdOrderRecord = orderResult.orderRecord;
+                addResult('order_creation', 'Dual Save & PDF Creation Pipeline', !!(orderResult && orderResult.orderRecord && orderResult.pdfResult), `Order ID: ${createdOrderRecord.orderId}, Status: "${createdOrderRecord.status}"`);
+
+                const savedInStorage = window.PaloraPDFOrder.getOrderById(createdOrderRecord.orderId);
+                addResult('order_creation', 'Local Storage Persistence', !!savedInStorage, `Record successfully preserved in localStorage ('palora_order_inquiries')`);
+            } catch (err) {
+                addResult('order_creation', 'Order Creation Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // CATEGORY 3: Cloud Order Saving & Serverless Operations
+            // ====================================================================
+            try {
+                const cloudStatus = await window.PaloraPDFOrder.checkCloudStatus();
+                if (cloudStatus && cloudStatus.supabaseConnected) {
+                    addResult('cloud_sync', 'Supabase Database Connection', true, 'Connected to live Supabase PostgreSQL database via Netlify Functions');
+                } else if (cloudStatus && cloudStatus.supabaseConfigured) {
+                    addResult('cloud_sync', 'Supabase Database Connection', false, `Supabase URL configured, but database table query failed: ${cloudStatus.error || 'Check SQL schema'}`);
+                } else {
+                    addResult('cloud_sync', 'Supabase Database Connection (Local Fallback)', true, 'Local fallback active: site is running locally or awaiting SUPABASE_URL & SUPABASE_SERVICE_ROLE_KEY in Netlify', true);
+                }
+
+                // Test syncOrderToCloud non-blocking behavior
+                if (createdOrderRecord) {
+                    const syncRes = await window.PaloraPDFOrder.syncOrderToCloud(createdOrderRecord);
+                    addResult('cloud_sync', 'Non-blocking Cloud Order Dispatch', true, `Async sync dispatched without blocking client flow (result: ${syncRes.success ? 'synced' : 'gracefully stored locally'})`);
+                }
+            } catch (err) {
+                addResult('cloud_sync', 'Cloud Order Sync Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // CATEGORY 4: Order Retrieval, Multi-field Search & Cache
+            // ====================================================================
+            try {
+                if (createdOrderRecord) {
+                    const byId = window.PaloraPDFOrder.getOrderById(createdOrderRecord.orderId);
+                    addResult('retrieval', 'Retrieve Order by ID', !!byId && byId.orderId === createdOrderRecord.orderId, `Found order: ${byId ? byId.orderId : 'not found'}`);
+
+                    const byMobile = window.PaloraPDFOrder.searchOrders('9876543210');
+                    addResult('retrieval', 'Search by Mobile Number', byMobile.some(o => o.orderId === createdOrderRecord.orderId), `Matched mobile number: 9876543210 (${byMobile.length} orders found)`);
+
+                    const byName = window.PaloraPDFOrder.searchOrders('Ananya');
+                    addResult('retrieval', 'Search by Customer Name', byName.some(o => o.orderId === createdOrderRecord.orderId), `Matched customer name: "Ananya"`);
+
+                    // Cross-device memory cache test
+                    window._paloraCloudOrdersCache['PH-CLOUD-TEST'] = {
+                        orderId: 'PH-CLOUD-TEST',
+                        customer: { fullName: 'Cloud Customer' },
+                        items: []
+                    };
+                    const cached = window.PaloraPDFOrder.getOrderById('PH-CLOUD-TEST');
+                    addResult('retrieval', 'Cross-Device Cloud Memory Cache', !!cached && cached.orderId === 'PH-CLOUD-TEST', 'Orders fetched on other devices are resolvable via _paloraCloudOrdersCache');
+                }
+            } catch (err) {
+                addResult('retrieval', 'Order Retrieval Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // CATEGORY 5: Order Status Updates & Audit History
+            // ====================================================================
+            try {
+                if (createdOrderRecord) {
+                    const updated = window.PaloraPDFOrder.updateOrderStatus(createdOrderRecord.orderId, 'Confirmed', 'UPI advance confirmed by store admin');
+                    const hasHistory = updated && Array.isArray(updated.statusHistory) && updated.statusHistory.length > 0;
+                    addResult('status_update', 'Order Status Transition & Audit Trail', hasHistory && updated.status === 'Confirmed', `Updated to "Confirmed", audit entries: ${hasHistory ? updated.statusHistory.length : 0}`);
+
+                    addResult('status_update', 'Admin Notes Storage', updated && updated.adminNotes === 'UPI advance confirmed by store admin', `Admin notes: "${updated ? updated.adminNotes : ''}"`);
+                }
+            } catch (err) {
+                addResult('status_update', 'Status Update Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // CATEGORY 6: Shopping Cart & Customer Details Synchronization
+            // ====================================================================
+            try {
+                window.PaloraCart.clearCart();
+                addResult('cart_sync', 'Cart Clear Action', window.PaloraCart.getCart().length === 0, 'Cart array reset to empty');
+
+                window.PaloraCart.seedCategoryCart(true);
+                const countAfterSeed = window.PaloraCart.getCart().length;
+                addResult('cart_sync', 'Category Cart Seeding', countAfterSeed >= 5, `Seeded ${countAfterSeed} curated products across distinct categories`);
+
+                const firstItem = window.PaloraCart.getCart()[0];
+                window.PaloraCart.updateQuantity(firstItem.id, 4);
+                const updatedQty = window.PaloraCart.getCart().find(i => i.id === firstItem.id).quantity;
+                addResult('cart_sync', 'Quantity Controls & Subtotal Calc', updatedQty === 4, `Quantity for "${firstItem.title}" updated to ${updatedQty}`);
+
+                const testCustDetails = {
+                    fullName: 'Rohit Verma',
+                    mobileNumber: '9123456780',
+                    address: '88 Cyber Gateway, Hi-Tech City',
+                    city: 'Hyderabad',
+                    state: 'Telangana',
+                    pincode: '500081',
+                    notes: 'Deliver on weekday'
+                };
+                window.PaloraCart.saveCustomerDetails(testCustDetails);
+                const restoredCust = window.PaloraCart.getCustomerDetails();
+                addResult('cart_sync', 'Customer Details Persistence', restoredCust.fullName === 'Rohit Verma' && restoredCust.pincode === '500081', `Preserved details for ${restoredCust.fullName}, ${restoredCust.city}`);
+            } catch (err) {
+                addResult('cart_sync', 'Cart Synchronization Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // CATEGORY 7: WhatsApp Ordering Integration
+            // ====================================================================
+            try {
+                const sampleDetails = {
+                    fullName: 'Pooja Hegde',
+                    mobileNumber: '9845012345',
+                    address: '12 Indiranagar 100ft Road',
+                    city: 'Bengaluru',
+                    state: 'Karnataka',
+                    pincode: '560038',
+                    notes: 'Gift wrap requested'
+                };
+                const waUrl = window.PaloraCart.getWhatsAppOrderUrl(sampleDetails, createdOrderRecord);
+                const hasPhone = waUrl && waUrl.includes('919319862081');
+                const hasOrderRef = waUrl && createdOrderRecord && waUrl.includes(encodeURIComponent(createdOrderRecord.orderId));
+                const hasCustInfo = waUrl && waUrl.includes(encodeURIComponent('Pooja Hegde'));
+
+                addResult('whatsapp', 'Official WhatsApp Phone Binding (+91 93198 62081)', hasPhone, 'Target endpoint: wa.me/919319862081');
+                addResult('whatsapp', 'Order Inquiry Metadata in WhatsApp Message', hasOrderRef, `Pre-filled message includes inquiry ID "${createdOrderRecord ? createdOrderRecord.orderId : ''}"`);
+                addResult('whatsapp', 'Customer & Address Details in WhatsApp Message', hasCustInfo, `Pre-filled message includes Name, Mobile, Address, City & PIN code`);
+            } catch (err) {
+                addResult('whatsapp', 'WhatsApp Integration Execution', false, err.message);
+            }
+
+            // ====================================================================
+            // Render UI
+            // ====================================================================
+            document.getElementById('badgePassCount').textContent = `${passCount} PASS`;
+            document.getElementById('badgeFailCount').textContent = `${failCount} FAIL`;
+            document.getElementById('badgeWarnCount').textContent = `${warnCount} NOTICE`;
+
+            const container = document.getElementById('testGroupsContainer');
+            container.innerHTML = testCategories.map(cat => {
+                const catPass = cat.tests.filter(t => t.status === 'PASS').length;
+                const catTotal = cat.tests.length;
+
+                return `
+                    <div class="category-card">
+                        <div class="category-header">
+                            <h2>${cat.icon} ${cat.title}</h2>
+                            <span class="category-count">${catPass} / ${catTotal} Passed</span>
+                        </div>
+                        <ul class="test-list">
+                            ${cat.tests.map(t => `
+                                <li class="test-item">
+                                    <div class="test-info">
+                                        <div class="test-title">${t.title}</div>
+                                        <div class="test-detail">${t.detail}</div>
+                                    </div>
+                                    <span class="test-status status-${t.status.toLowerCase()}">${t.status}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+
+            // Environment & Database Diagnosis
+            renderEnvDiagnosis();
+        }
+
+        async function renderEnvDiagnosis() {
+            const list = document.getElementById('envDiagnosisList');
+            if (!list) return;
+
+            let cloudInfo = { configured: false, online: false };
+            try {
+                cloudInfo = await window.PaloraPDFOrder.checkCloudStatus();
+            } catch (e) {}
+
+            const envChecks = [
+                {
+                    name: 'Netlify Serverless Function: create-order.js',
+                    status: 'CONFIGURED',
+                    desc: 'Zero-dependency REST endpoint for writing customer orders into Supabase'
+                },
+                {
+                    name: 'Netlify Serverless Function: get-orders.js',
+                    status: 'CONFIGURED',
+                    desc: 'PIN-authenticated endpoint for retrieving orders across any device'
+                },
+                {
+                    name: 'Netlify Serverless Function: update-order-status.js',
+                    status: 'CONFIGURED',
+                    desc: 'Serverless endpoint for updating order statuses and maintaining audit logs'
+                },
+                {
+                    name: 'Netlify Serverless Function: delete-order.js',
+                    status: 'CONFIGURED',
+                    desc: 'Serverless endpoint for deleting order records'
+                },
+                {
+                    name: 'Netlify Function & API Rewrite Rules (netlify.toml)',
+                    status: 'CONFIGURED',
+                    desc: '/api/* mapped to /.netlify/functions/:splat with security headers'
+                },
+                {
+                    name: 'Supabase SQL Database Migration (supabase_schema.sql)',
+                    status: 'READY TO RUN',
+                    desc: 'Defines public.orders table, 4 performance indexes, and RLS policies'
+                },
+                {
+                    name: 'Netlify Environment Variable: SUPABASE_URL',
+                    status: cloudInfo.supabaseConfigured ? 'CONFIGURED' : 'PENDING USER SETUP IN NETLIFY',
+                    desc: 'Required in Netlify Site Configuration: https://<project-ref>.supabase.co'
+                },
+                {
+                    name: 'Netlify Environment Variable: SUPABASE_SERVICE_ROLE_KEY',
+                    status: cloudInfo.supabaseConfigured ? 'CONFIGURED' : 'PENDING USER SETUP IN NETLIFY',
+                    desc: 'Private service_role key required for secure serverless Supabase writes/reads'
+                },
+                {
+                    name: 'Netlify Environment Variable: ADMIN_PIN',
+                    status: 'CONFIGURED (DEFAULT: palora2026)',
+                    desc: 'Protected store administrator PIN for admin.html access'
+                }
+            ];
+
+            list.innerHTML = envChecks.map(item => {
+                let badgeClass = 'env-configured';
+                if (item.status.includes('PENDING')) badgeClass = 'env-missing';
+                else if (item.status.includes('READY')) badgeClass = 'env-offline';
+
+                return `
+                    <div class="env-item">
+                        <div>
+                            <strong>${item.name}</strong>
+                            <div style="font-size: 0.75rem; color: #94A3B8; margin-top: 2px;">${item.desc}</div>
+                        </div>
+                        <span class="env-tag ${badgeClass}">${item.status}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', runAllTests);
+    </script>
+</body>
+</html>

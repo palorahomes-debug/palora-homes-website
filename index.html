@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Palora Homes | Modern Living, Indian Soul</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Palora Homes crafts premium handcrafted home decor and artisanal living accents. Modern Living, Indian Soul. Explore our wall decor, artisanal wall clocks, night lamps, wall hangings, and more.">
+    <meta name="keywords" content="Palora Homes, Home Decor, Living Accents, Modern Living Indian Soul, Wall Decor, Wall Clock, Night Lamp, Wall Hanging, Car Dashboard Decore, Key Holder, Handcrafted Decor">
+    <meta name="author" content="Palora Homes">
+    <meta name="theme-color" content="#3B2215">
+
+    <!-- Google Fonts: Cormorant Garamond, Playfair Display, Caveat Script & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ==========================================
+         TOP NAVIGATION BAR
+         ========================================== -->
+    <header class="navbar-wrapper" id="navbar">
+        <div class="nav-container">
+            <!-- Brand Logo with Architectural Gable & Serif Identity -->
+            <a href="#home" class="brand-logo" aria-label="Palora Homes Home">
+                <div class="brand-roof-icon" aria-hidden="true">
+                    <svg width="34" height="24" viewBox="0 0 34 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 2L2 14H5.5L17 4.8L28.5 14H32L17 2Z" fill="#3B2215"/>
+                        <rect x="14" y="10" width="2.5" height="2.5" fill="#3B2215"/>
+                        <rect x="17.5" y="10" width="2.5" height="2.5" fill="#3B2215"/>
+                        <rect x="14" y="13.5" width="2.5" height="2.5" fill="#3B2215"/>
+                        <rect x="17.5" y="13.5" width="2.5" height="2.5" fill="#3B2215"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">PALORA HOMES</span>
+                    <span class="brand-tagline">Modern Living, Indian Soul</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links with Active Underline -->
+            <nav class="nav-menu" id="navMenu" aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="#home" class="nav-link active" id="navLinkHome">Home</a></li>
+                    <li><a href="#shop-categories" class="nav-link" data-cat="all">Categories</a></li>
+                    <li><a href="#products-catalog" class="nav-link" data-cat="wall-decor">Collections</a></li>
+                    <li><a href="#about" class="nav-link">About Us</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <!-- Navigation Right Icons (Search, Account, Cart) -->
+            <div class="nav-right-actions">
+                <!-- Search Button -->
+                <button class="nav-icon-btn" id="searchBtn" aria-label="Search collections" title="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+
+                <!-- User / Account Button -->
+                <button class="nav-icon-btn" id="accountBtn" aria-label="Customer Account / Consultation" title="Account">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+
+                <!-- Shopping Bag / Cart Button -->
+                <a href="cart.html" class="nav-icon-btn bag-btn" id="cartBtn" aria-label="Shopping Cart" title="Shopping Cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span class="bag-count" id="bagCount">0</span>
+                </a>
+
+                <!-- Mobile Hamburger Toggle -->
+                <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- ==========================================
+             HERO SECTION (HOME)
+             Warm Living Room Scene with Curtains, Sofa & Shelves
+             ========================================== -->
+        <section class="hero-section" id="home">
+            <div class="hero-container">
+                <!-- Hero Left: Typography & Call-To-Action -->
+                <div class="hero-content">
+                    <!-- Leaf Botanical Flourish with Horizontal Lines -->
+                    <div class="hero-flourish" aria-hidden="true">
+                        <span class="flourish-line"></span>
+                        <div class="flourish-icon">
+                            <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 2C16 2 13 8 13 13C13 16 14.5 19 16 22C17.5 19 19 16 19 13C19 8 16 2 16 2Z" fill="#3B2215"/>
+                                <path d="M16 14C11.5 11 7 13.5 5 15.5C8 18 12.5 17 15 16C15.5 15 15.8 14.5 16 14Z" fill="#3B2215"/>
+                                <path d="M16 14C20.5 11 25 13.5 27 15.5C24 18 19.5 17 17 16C16.5 15 16.2 14.5 16 14Z" fill="#3B2215"/>
+                            </svg>
+                        </div>
+                        <span class="flourish-line"></span>
+                    </div>
+
+                    <!-- Main Brand Headline -->
+                    <h1 class="hero-title">PALORA HOMES</h1>
+                    <div class="hero-tagline">Modern Living, Indian Soul</div>
+
+                    <!-- Descriptive Paragraph -->
+                    <p class="hero-description">
+                        Beautiful handcrafted home decor and living accents to make your everyday spaces special.
+                    </p>
+
+                    <!-- Dark Brown Rounded Pill CTA Button -->
+                    <div class="hero-actions">
+                        <a href="#shop-categories" class="btn-explore-collection" id="exploreBtn">
+                            <span>Explore Collection</span>
+                            <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Right: Cozy Living Room Visual -->
+                <div class="hero-visual">
+                    <img 
+                        src="assets/images/hero-living-room.jpg" 
+                        alt="Palora Homes warm living room setting with modern cream sofa, wooden floating shelves with deer figurines, and cozy ambient lighting"
+                        class="hero-living-room-img"
+                        loading="eager"
+                    />
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VALUE PROPOSITIONS / TRUST BAR
+             Premium Quality, Pan India Delivery, Easy Returns, Customer Support
+             ========================================== -->
+        <section class="trust-bar-section" aria-label="Palora Homes Promises">
+            <div class="trust-bar-container">
+                <!-- 1. Premium Quality -->
+                <div class="trust-item">
+                    <div class="trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h3 class="trust-title">Premium Quality</h3>
+                        <p class="trust-sub">Crafted for lasting beauty</p>
+                    </div>
+                </div>
+
+                <div class="trust-divider" aria-hidden="true"></div>
+
+                <!-- 2. Pan India Delivery -->
+                <div class="trust-item">
+                    <div class="trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h3 class="trust-title">Pan India Delivery</h3>
+                        <p class="trust-sub">Safe &amp; secure shipping</p>
+                    </div>
+                </div>
+
+                <div class="trust-divider" aria-hidden="true"></div>
+
+                <!-- 3. Easy Returns -->
+                <div class="trust-item">
+                    <div class="trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <polyline points="9 12 11 14 15 10"></polyline>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h3 class="trust-title">Easy Returns</h3>
+                        <p class="trust-sub">Hassle-free experience</p>
+                    </div>
+                </div>
+
+                <div class="trust-divider" aria-hidden="true"></div>
+
+                <!-- 4. Customer Support -->
+                <div class="trust-item">
+                    <div class="trust-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <h3 class="trust-title">Customer Support</h3>
+                        <p class="trust-sub">We're here to help</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SHOP BY CATEGORY SECTION
+             6 Circular Cards: Wall Decor, Wall Clock, Night Lamp,
+             Wall Hanging, Car Dashboard Decore, Key Holder
+             ========================================== -->
+        <section class="category-section" id="shop-categories">
+            <div class="category-container">
+                <!-- Section Header with Ornamental Dividers -->
+                <div class="section-heading-ornate">
+                    <div class="ornate-line-title">
+                        <span class="heading-line"></span>
+                        <h2 class="section-title">Shop by Category</h2>
+                        <span class="heading-line"></span>
+                    </div>
+                    <p class="section-subtitle">Find the perfect piece for every corner of your home</p>
+                </div>
+
+                <!-- 6 Category Circles -->
+                <div class="categories-row">
+                    <!-- Category 1: Wall Decor -->
+                    <button class="category-circle-card" data-category="wall-decor" aria-label="Browse Wall Decor">
+                        <div class="circle-thumb-wrap">
+                            <img src="assets/images/cat-1-wall-decor.jpg" alt="Wall Decor - Shelves and Planters" class="circle-thumb-img" loading="lazy">
+                        </div>
+                        <span class="category-name">Wall Decor</span>
+                        <span class="category-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+
+                    <!-- Category 2: Wall Clock -->
+                    <button class="category-circle-card" data-category="wall-clock" aria-label="Browse Wall Clocks">
+                        <div class="circle-thumb-wrap">
+                            <img src="assets/images/wall-clock-deer-pendulum.jpg" alt="Wall Clock - Nordic Deer Antler Pendulum Clock" class="circle-thumb-img" loading="lazy">
+                        </div>
+                        <span class="category-name">Wall Clock</span>
+                        <span class="category-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+
+                    <!-- Category 3: Night Lamp -->
+                    <button class="category-circle-card" data-category="night-lamp" aria-label="Browse Night Lamps">
+                        <div class="circle-thumb-wrap">
+                            <img src="assets/images/heart-3d-led-lamp.png" alt="Night Lamp - 3D Optical Illusion LED Lamp" class="circle-thumb-img" loading="lazy">
+                        </div>
+                        <span class="category-name">Night Lamp</span>
+                        <span class="category-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+
+                    <!-- Category 4: Wall Hanging -->
+                    <button class="category-circle-card" data-category="wall-hanging" aria-label="Browse Wall Hangings">
+                        <div class="circle-thumb-wrap">
+                            <img src="assets/images/ganesha-evil-eye-hanging.jpg" alt="Wall Hanging - Sacred Lord Ganesha Evil Eye" class="circle-thumb-img" loading="lazy">
+                        </div>
+                        <span class="category-name">Wall Hanging</span>
+                        <span class="category-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+
+                    <!-- Category 5: Car Dashboard Decore -->
+                    <button class="category-circle-card" data-category="car-dashboard" aria-label="Browse Car Dashboard Decore">
+                        <div class="circle-thumb-wrap">
+                            <img src="assets/images/car-dashboard-hanuman-acd004.png" alt="Car Dashboard Decore - Sacred Deity Frame" class="circle-thumb-img" loading="lazy">
+                        </div>
+                        <span class="category-name">Car Dashboard Decore</span>
+                        <span class="category-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+
+                    <!-- Category 6: Key Holder -->
+                    <button class="category-circle-card" data-category="key-holder" aria-label="Browse Key Holders">
+                        <div class="circle-thumb-wrap">
+                            <img src="assets/images/key-holder-family-birds-kh082.png" alt="Key Holder - Handcrafted Silhouette Hook Rack" class="circle-thumb-img" loading="lazy">
+                        </div>
+                        <span class="category-name">Key Holder</span>
+                        <span class="category-arrow" aria-hidden="true">&rarr;</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             BULK QUANTITY ALSO AVAILABLE BANNER
+             Box Icon, Script Text "Decor Your World with Palora Homes ♡", Still Life
+             ========================================== -->
+        <section class="bulk-banner-section" aria-label="Bulk Orders and Corporate Inquiries">
+            <div class="bulk-banner-container">
+                <div class="bulk-card">
+                    <!-- Left Column: Bulk Quantity Callout -->
+                    <div class="bulk-col-info">
+                        <div class="bulk-heading-row">
+                            <div class="bulk-box-icon" aria-hidden="true">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                </svg>
+                            </div>
+                            <div class="bulk-title-group">
+                                <h3 class="bulk-title">Bulk Quantity Also Available</h3>
+                                <p class="bulk-subtitle">For homes, offices, and retail businesses</p>
+                            </div>
+                        </div>
+
+                        <a 
+                            href="https://wa.me/919319862081?text=Hello%20Palora%20Homes,%20I%20am%20interested%20in%20bulk%20quantity%20orders%20for%20homes,%20offices,%20or%20retail%20business.%20Please%20share%20wholesale%20details." 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            class="btn-bulk-contact"
+                            id="bulkContactBtn"
+                        >
+                            <span>Contact Us</span>
+                            <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+                        </a>
+                    </div>
+
+                    <!-- Center Column: Stylized Script Quote -->
+                    <div class="bulk-col-script">
+                        <div class="script-art-wrap">
+                            <span class="script-decor-word">Decor</span>
+                            <span class="script-your-world">Your World</span>
+                            <span class="script-with-brand">with Palora Homes</span>
+                            <div class="script-heart-line">
+                                <span class="script-heart-symbol" aria-hidden="true">&hearts;</span>
+                                <span class="script-sub-underline" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Warm Decor Still Life Imagery -->
+                    <div class="bulk-col-media">
+                        <img 
+                            src="assets/images/banner-decor-still-life.jpg" 
+                            alt="Palora Homes curated ceramic planter and warm wooden accessories" 
+                            class="bulk-media-img"
+                            loading="lazy"
+                        />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SIGNATURE PRODUCTS & COLLECTIONS SECTION
+             Interactive Catalog with Filters & WhatsApp Orders
+             ========================================== -->
+        <section class="catalog-section" id="products-catalog">
+            <div class="catalog-container">
+                <div class="section-heading-ornate">
+                    <div class="ornate-line-title">
+                        <span class="heading-line"></span>
+                        <h2 class="section-title">Curated Collections</h2>
+                        <span class="heading-line"></span>
+                    </div>
+                    <p class="section-subtitle" id="catalogSubtitle">Available for direct WhatsApp order inquiries at +91 93198 62081</p>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="catalog-filter-tabs" id="catalogFilters" role="tablist">
+                    <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">All Items</button>
+                    <button class="filter-tab" data-filter="wall-decor" role="tab" aria-selected="false">Wall Decor</button>
+                    <button class="filter-tab" data-filter="wall-clock" role="tab" aria-selected="false">Wall Clocks</button>
+                    <button class="filter-tab" data-filter="night-lamp" role="tab" aria-selected="false">Night Lamps</button>
+                    <button class="filter-tab" data-filter="wall-hanging" role="tab" aria-selected="false">Wall Hangings</button>
+                    <button class="filter-tab" data-filter="car-dashboard" role="tab" aria-selected="false">Car Dashboard</button>
+                    <button class="filter-tab" data-filter="key-holder" role="tab" aria-selected="false">Key Holders</button>
+                </div>
+
+                <!-- Product Grid (Rendered via js/main.js) -->
+                <div class="products-grid" id="productsGrid">
+                    <!-- Dynamically populated from PALORA_CONFIG.upcomingCollections -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             ABOUT US SECTION
+             Honest Materials, Timeless Design
+             ========================================== -->
+        <section class="about-section" id="about">
+            <div class="about-container">
+                <div class="about-grid">
+                    <div class="about-visual-col">
+                        <div class="about-image-card">
+                            <img 
+                                src="assets/images/hero-living-room.jpg" 
+                                alt="Palora Homes handcrafted interior styling and living serenity" 
+                                class="about-img"
+                                loading="lazy"
+                            />
+                            <div class="about-badge-seal">
+                                <span class="seal-brand">Palora Homes</span>
+                                <span class="seal-sub">Modern Living, Indian Soul</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-text-col">
+                        <span class="eyebrow-text">About Palora Homes</span>
+                        <h2 class="about-title">Honest Materials. Timeless Design.</h2>
+                        <p class="about-quote">"Modern Living, Indian Soul"</p>
+                        
+                        <p class="about-p">
+                            At <strong>Palora Homes</strong>, we craft pieces that make everyday spaces calmer, warmer, and truly memorable. From hand-carved wooden timepieces and organic floating shelves to ambient lamps and auspicious wall hangings, our products celebrate authentic artisan craftsmanship.
+                        </p>
+                        <p class="about-p">
+                            Every design marries contemporary clean lines with traditional Indian warmth—blending solid hardwoods, natural stones, pure cotton weaves, and radiant brass accents that age gracefully with your home.
+                        </p>
+
+                        <!-- Key Pillars -->
+                        <div class="about-pillars-grid">
+                            <div class="pillar-card">
+                                <h4>Artisan Handcrafted</h4>
+                                <p>Carved with precision by skilled hands celebrating natural wood textures.</p>
+                            </div>
+                            <div class="pillar-card">
+                                <h4>Natural Materials</h4>
+                                <p>Solid acacia, teak, sheesham wood, organic cotton, and solid brass accents.</p>
+                            </div>
+                            <div class="pillar-card">
+                                <h4>Pan India Safe Shipping</h4>
+                                <p>Secure multi-layer protective packaging for flawless doorstep arrival.</p>
+                            </div>
+                            <div class="pillar-card">
+                                <h4>Direct WhatsApp Orders</h4>
+                                <p>Personalized customer care and custom orders at +91 93198 62081.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             CONTACT US & INQUIRY SECTION
+             ========================================== -->
+        <section class="contact-section" id="contact">
+            <div class="contact-container">
+                <div class="section-heading-ornate">
+                    <div class="ornate-line-title">
+                        <span class="heading-line"></span>
+                        <h2 class="section-title">Get In Touch</h2>
+                        <span class="heading-line"></span>
+                    </div>
+                    <p class="section-subtitle">Connect directly with Palora Homes for retail, custom curation, or wholesale orders</p>
+                </div>
+
+                <div class="contact-layout">
+                    <!-- Contact Cards -->
+                    <div class="contact-cards-col">
+                        <!-- Card 1: Official WhatsApp -->
+                        <div class="contact-box highlight-box">
+                            <div class="contact-box-icon" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.507 14.307l-.009.075c-2.387-1.196-2.822-1.423-3.26-1.077-.282.223-.559.57-.866.864-.325.312-.662.355-1.189.09-1.996-1.002-3.32-2.316-4.329-4.306-.264-.523-.223-.859.088-1.185.293-.309.642-.584.866-.867.348-.439.12-1.076-1.074-3.465C8.423 3.738 8.01 3.753 7.643 3.753c-.328 0-.712.112-1.085.518-.372.408-1.425 1.391-1.425 3.394 0 2.003 1.458 3.94 1.66 4.215.204.275 2.872 4.385 6.958 6.147 2.721 1.173 3.805 1.055 4.496.985.992-.102 2.387-.977 2.724-1.924.338-.948.338-1.761.238-1.925-.102-.164-.372-.266-.702-.456zM12 2a10 10 0 0 0-8.66 15L2 22l5.14-1.34A10 10 0 1 0 12 2z"/>
+                                </svg>
+                            </div>
+                            <div class="contact-box-content">
+                                <h4>Official WhatsApp Orders</h4>
+                                <p><a href="https://wa.me/919319862081" target="_blank" rel="noopener noreferrer">+91 93198 62081</a></p>
+                                <span class="badge-active-hours">Mon – Sat: 10:00 AM – 7:00 PM IST</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Company -->
+                        <div class="contact-box">
+                            <div class="contact-box-icon" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                            </div>
+                            <div class="contact-box-content">
+                                <h4>Palora Homes</h4>
+                                <p>Handcrafted Home Decor &amp; Artisanal Living Accents</p>
+                                <span class="contact-sub-text">Modern Living, Indian Soul</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Bulk Inquiries -->
+                        <div class="contact-box">
+                            <div class="contact-box-icon" aria-hidden="true">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                </svg>
+                            </div>
+                            <div class="contact-box-content">
+                                <h4>Bulk &amp; Retail Supply</h4>
+                                <p>Homes, interior stylists, offices &amp; retail stores</p>
+                                <span class="contact-sub-text">Prompt WhatsApp wholesale response</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direct WhatsApp Inquiry Form -->
+                    <div class="contact-form-card">
+                        <div class="form-header">
+                            <h3>Quick Inquiry to WhatsApp</h3>
+                            <p>Fill in your details below to start a chat with our team on WhatsApp (+91 93198 62081).</p>
+                        </div>
+
+                        <form id="quickInquiryForm" class="inquiry-form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="formName">Full Name *</label>
+                                    <input type="text" id="formName" placeholder="e.g. Rahul Sharma" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="formPhone">Your WhatsApp Number</label>
+                                    <input type="tel" id="formPhone" placeholder="e.g. +91 9876543210">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="formCategory">Category of Interest</label>
+                                    <select id="formCategory">
+                                        <option value="All Collections">All Collections</option>
+                                        <option value="Wall Decor">Wall Decor (Floating Shelves &amp; Art)</option>
+                                        <option value="Wall Clock">Wall Clocks</option>
+                                        <option value="Night Lamp">Night Lamps &amp; Ambient Lighting</option>
+                                        <option value="Wall Hanging">Wall Hangings &amp; Nazar Battu</option>
+                                        <option value="Car Dashboard Decore">Car Dashboard Decore</option>
+                                        <option value="Key Holder">Key Holders &amp; Organizers</option>
+                                        <option value="Bulk Quantity Orders">Bulk / Wholesale Quantity</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="formMessage">Your Message / Requirements *</label>
+                                <textarea id="formMessage" rows="3" placeholder="Tell us what pieces or quantities you are looking for..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn-submit-inquiry" id="submitInquiryBtn">
+                                <svg class="btn-wa-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M17.507 14.307l-.009.075c-2.387-1.196-2.822-1.423-3.26-1.077-.282.223-.559.57-.866.864-.325.312-.662.355-1.189.09-1.996-1.002-3.32-2.316-4.329-4.306-.264-.523-.223-.859.088-1.185.293-.309.642-.584.866-.867.348-.439.12-1.076-1.074-3.465C8.423 3.738 8.01 3.753 7.643 3.753c-.328 0-.712.112-1.085.518-.372.408-1.425 1.391-1.425 3.394 0 2.003 1.458 3.94 1.66 4.215.204.275 2.872 4.385 6.958 6.147 2.721 1.173 3.805 1.055 4.496.985.992-.102 2.387-.977 2.724-1.924.338-.948.338-1.761.238-1.925-.102-.164-.372-.266-.702-.456zM12 2a10 10 0 0 0-8.66 15L2 22l5.14-1.34A10 10 0 1 0 12 2z"/>
+                                </svg>
+                                <span>Send WhatsApp Inquiry to +91 93198 62081</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==========================================
+         OFFICIAL FOOTER (MATCHING USER'S MOCKUP)
+         Dark Brown Bar, Social Icons, Green "Order on WhatsApp" Button
+         ========================================== -->
+    <footer class="footer-wrapper">
+        <div class="footer-container">
+            <!-- Footer Main Top Row -->
+            <div class="footer-main-row">
+                <!-- Left: Brand Title & Tagline -->
+                <div class="footer-brand-col">
+                    <h3 class="footer-brand-title">PALORA HOMES</h3>
+                    <p class="footer-brand-tagline">Modern Living, Indian Soul</p>
+                </div>
+
+                <!-- Center: Follow Us with Social Media Icons -->
+                <div class="footer-follow-col">
+                    <h4 class="footer-follow-title">Follow Us</h4>
+                    <div class="footer-social-icons">
+                        <!-- Instagram -->
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-circle-link" aria-label="Follow Palora Homes on Instagram">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </a>
+                        <!-- Facebook -->
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-circle-link" aria-label="Follow Palora Homes on Facebook">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Green WhatsApp Pill CTA Button -->
+                <div class="footer-cta-col">
+                    <a 
+                        href="https://wa.me/919319862081?text=Hello%20Palora%20Homes,%20I%20would%20like%20to%20order%20from%20your%20Home%20Decor%20collections." 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="btn-footer-whatsapp"
+                        id="footerWhatsAppBtn"
+                        aria-label="Order on WhatsApp with Palora Homes at +91 93198 62081"
+                    >
+                        <svg class="wa-btn-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M17.507 14.307l-.009.075c-2.387-1.196-2.822-1.423-3.26-1.077-.282.223-.559.57-.866.864-.325.312-.662.355-1.189.09-1.996-1.002-3.32-2.316-4.329-4.306-.264-.523-.223-.859.088-1.185.293-.309.642-.584.866-.867.348-.439.12-1.076-1.074-3.465C8.423 3.738 8.01 3.753 7.643 3.753c-.328 0-.712.112-1.085.518-.372.408-1.425 1.391-1.425 3.394 0 2.003 1.458 3.94 1.66 4.215.204.275 2.872 4.385 6.958 6.147 2.721 1.173 3.805 1.055 4.496.985.992-.102 2.387-.977 2.724-1.924.338-.948.338-1.761.238-1.925-.102-.164-.372-.266-.702-.456zM12 2a10 10 0 0 0-8.66 15L2 22l5.14-1.34A10 10 0 1 0 12 2z"/>
+                        </svg>
+                        <span>Order on WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer Bottom Copyright -->
+            <div class="footer-bottom-row">
+                <p>&copy; 2026 Palora Homes. All rights reserved. <a href="admin.html" style="color: inherit; text-decoration: none; opacity: 0.65; margin-left: 12px;" title="Store Admin Dashboard">Admin Portal</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         SEARCH MODAL
+         ========================================== -->
+    <div class="modal-backdrop" id="searchModal" aria-hidden="true">
+        <div class="modal-box search-modal-box" role="dialog" aria-modal="true" aria-label="Search Palora Homes Products">
+            <div class="modal-header">
+                <h3>Search Our Collections</h3>
+                <button class="modal-close-btn" id="closeSearchBtn" aria-label="Close search">&times;</button>
+            </div>
+            <div class="search-input-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search wall clock, shelves, night lamp, ganesha, macrame..." autofocus>
+            </div>
+            <div class="search-results-list" id="searchResultsList">
+                <p class="search-hint">Type above to quickly find your favorite handcrafted home decor piece.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         INQUIRY BAG / CART DRAWER
+         ========================================== -->
+    <div class="drawer-backdrop" id="cartDrawer" aria-hidden="true">
+        <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Order Inquiries Cart">
+            <div class="drawer-header">
+                <div class="drawer-title-row">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <h3>Your Inquired Pieces</h3>
+                </div>
+                <button class="drawer-close-btn" id="closeCartBtn" aria-label="Close bag">&times;</button>
+            </div>
+
+            <div class="drawer-body" id="cartItemsList">
+                <!-- Populated dynamically -->
+            </div>
+
+            <div class="drawer-footer">
+                <button class="btn-checkout-wa" id="checkoutWaBtn">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M17.507 14.307l-.009.075c-2.387-1.196-2.822-1.423-3.26-1.077-.282.223-.559.57-.866.864-.325.312-.662.355-1.189.09-1.996-1.002-3.32-2.316-4.329-4.306-.264-.523-.223-.859.088-1.185.293-.309.642-.584.866-.867.348-.439.12-1.076-1.074-3.465C8.423 3.738 8.01 3.753 7.643 3.753c-.328 0-.712.112-1.085.518-.372.408-1.425 1.391-1.425 3.394 0 2.003 1.458 3.94 1.66 4.215.204.275 2.872 4.385 6.958 6.147 2.721 1.173 3.805 1.055 4.496.985.992-.102 2.387-.977 2.724-1.924.338-.948.338-1.761.238-1.925-.102-.164-.372-.266-.702-.456zM12 2a10 10 0 0 0-8.66 15L2 22l5.14-1.34A10 10 0 1 0 12 2z"/>
+                    </svg>
+                    <span>Proceed to Customer Details &rarr;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         FLOATING WHATSAPP BUTTON & CHAT BUBBLE (+91 93198 62081)
+         ========================================== -->
+    <div class="floating-wa-wrap">
+        <div class="wa-tooltip-bubble" id="waBubble">
+            <div class="bubble-top">
+                <strong>Palora Homes Support</strong>
+                <button class="bubble-x" id="bubbleCloseBtn" aria-label="Close tooltip">&times;</button>
+            </div>
+            <p>Chat with us on WhatsApp for orders, custom sizes, or prompt assistance!</p>
+        </div>
+
+        <a 
+            href="https://wa.me/919319862081?text=Hello%20Palora%20Homes,%20I%20would%20like%20to%20inquire%20about%20your%20Home%20Decor%20collections." 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="floating-wa-btn" 
+            id="floatingWaBtn"
+            aria-label="Direct WhatsApp Order at +91 93198 62081"
+            title="Chat on WhatsApp"
+        >
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
+                <path d="M17.507 14.307l-.009.075c-2.387-1.196-2.822-1.423-3.26-1.077-.282.223-.559.57-.866.864-.325.312-.662.355-1.189.09-1.996-1.002-3.32-2.316-4.329-4.306-.264-.523-.223-.859.088-1.185.293-.309.642-.584.866-.867.348-.439.12-1.076-1.074-3.465C8.423 3.738 8.01 3.753 7.643 3.753c-.328 0-.712.112-1.085.518-.372.408-1.425 1.391-1.425 3.394 0 2.003 1.458 3.94 1.66 4.215.204.275 2.872 4.385 6.958 6.147 2.721 1.173 3.805 1.055 4.496.985.992-.102 2.387-.977 2.724-1.924.338-.948.338-1.761.238-1.925-.102-.164-.372-.266-.702-.456zM12 2a10 10 0 0 0-8.66 15L2 22l5.14-1.34A10 10 0 1 0 12 2z"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-popup" id="toastNotice" role="status" aria-live="polite"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/libs/jspdf.umd.min.js"></script>
+    <script src="js/libs/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/pdf-order.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
