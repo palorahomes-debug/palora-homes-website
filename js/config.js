@@ -421,8 +421,8 @@ const PALORA_CONFIG = {
     // Supabase Cloud Backend Configuration (Browser Public Credentials)
     // NOTE: Only use public anon key here. NEVER expose service_role secret key in frontend.
     supabase: {
-        url: "https://uqubmerlfjlbcwbboyef.supabase.co",      // Found in: Supabase Dashboard -> Project Settings -> API -> Project URL
-        anonKey: "sb_publishable_RXu9bKPbRWNqrygNyt7E2w_jD28LwWR"   // Found in: Supabase Dashboard -> Project Settings -> API -> Project API keys -> anon public
+        url: "https://wirqwmdsvssvjqpjljuv.supabase.co",      // Found in: Supabase Dashboard -> Project Settings -> API -> Project URL
+        anonKey: "sb_publishable_4pjBA9MRRpW9Gbl4505Y3w_a7xdycU0"   // Found in: Supabase Dashboard -> Project Settings -> API -> Project API keys -> anon public
     }
 };
 
