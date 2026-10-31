@@ -38,13 +38,18 @@
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         if (parsed.url && parsed.anonKey) {
-                            config.url = parsed.url;
-                            config.anonKey = parsed.anonKey;
+                            config.url = (parsed.url || '').trim();
+                            config.anonKey = (parsed.anonKey || '').trim();
                         }
                     }
                 } catch (e) {
                     // Ignore localStorage read errors
                 }
+            }
+
+            // Sanitize / normalize URL: strip trailing slashes and '/rest/v1' if inadvertently included
+            if (config.url) {
+                config.url = config.url.replace(/\/+$/, '').replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
             }
 
             return config;
@@ -57,8 +62,9 @@
          */
         saveConfig: function (url, anonKey) {
             try {
+                const cleanUrl = (url || '').trim().replace(/\/+$/, '').replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
                 localStorage.setItem(STORAGE_CONFIG_KEY, JSON.stringify({
-                    url: (url || '').trim(),
+                    url: cleanUrl,
                     anonKey: (anonKey || '').trim()
                 }));
                 supabaseClient = null; // Re-initialize on next call
@@ -623,6 +629,409 @@
                 return { publicUrl: urlRes.data.publicUrl, error: null };
             } catch (err) {
                 return { publicUrl: null, error: err.message };
+            }
+        },
+
+        /**
+         * Fetch all products including draft or hidden ones (Admin only)
+         * Falls back to local catalog if cloud table is empty
+         * @returns {Promise<Array>}
+         */
+        adminFetchAllProducts: async function () {
+            const client = this.getClient();
+            if (!client) {
+                return (window.PALORA_CONFIG && window.PALORA_CONFIG.upcomingCollections) || [];
+            }
+
+            try {
+                const res = await client
+                    .from('products')
+                    .select('*')
+                    .order('display_order', { ascending: true })
+                    .order('created_at', { ascending: false });
+
+                if (res.error || !res.data || res.data.length === 0) {
+                    return (window.PALORA_CONFIG && window.PALORA_CONFIG.upcomingCollections) || [];
+                }
+
+                return res.data;
+            } catch (err) {
+                return (window.PALORA_CONFIG && window.PALORA_CONFIG.upcomingCollections) || [];
+            }
+        },
+
+        /**
+         * Idempotently seeds the 23 default signature catalog items into Supabase
+         * @returns {Promise<{ success: boolean, count: number, error: string|null }>}
+         */
+        adminSeedDefaultProducts: async function () {
+            const client = this.getClient();
+            if (!client) return { success: false, count: 0, error: 'Database backend not configured.' };
+
+            const catalog = (window.PALORA_CONFIG && window.PALORA_CONFIG.upcomingCollections) || [];
+            if (catalog.length === 0) return { success: true, count: 0, error: null };
+
+            try {
+                const records = catalog.map((p, idx) => ({
+                    id: p.id,
+                    category_id: p.category,
+                    category_name: p.categoryName || 'Curated',
+                    title: p.title,
+                    subtitle: p.subtitle || '',
+                    specs: p.specs || '',
+                    description: p.description || '',
+                    price: typeof p.price === 'number' ? p.price : null,
+                    stock_quantity: typeof p.stockQuantity === 'number' ? p.stockQuantity : 15,
+                    is_available: true,
+                    status: p.status || 'Available for Order',
+                    highlights: p.highlights || [],
+                    image_url: p.image,
+                    display_order: idx + 1,
+                    updated_at: new Date().toISOString()
+                }));
+
+                const res = await client
+                    .from('products')
+                    .upsert(records, { onConflict: 'id' })
+                    .select();
+
+                if (res.error) {
+                    return { success: false, count: 0, error: res.error.message };
+                }
+
+                // Refresh client cache
+                if (window.PaloraProducts && typeof window.PaloraProducts.loadProductsFromCloud === 'function') {
+                    window.PaloraProducts.loadProductsFromCloud();
+                }
+
+                return { success: true, count: records.length, error: null };
+            } catch (err) {
+                return { success: false, count: 0, error: err.message };
+            }
+        },
+
+        /**
+         * Fetch all orders directly from Supabase (or fallback to Netlify API)
+         * @returns {Promise<Array>}
+         */
+        adminFetchAllOrders: async function () {
+            const client = this.getClient();
+            if (!client) {
+                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
+                    return await window.PaloraPDFOrder.getOrdersFromCloud();
+                }
+                return [];
+            }
+
+            try {
+                const res = await client
+                    .from('orders')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (res.error) {
+                    console.info('PaloraSupabase: Direct orders query failed, attempting Netlify API fallback.', res.error.message);
+                    if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
+                        return await window.PaloraPDFOrder.getOrdersFromCloud();
+                    }
+                    return [];
+                }
+
+                return res.data || [];
+            } catch (err) {
+                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
+                    return await window.PaloraPDFOrder.getOrdersFromCloud();
+                }
+                return [];
+            }
+        },
+
+        /**
+         * Update an order status in Supabase
+         * @param {string} orderId
+         * @param {string} newStatus
+         * @param {string} [notes]
+         * @returns {Promise<{ success: boolean, order: Object|null, error: string|null }>}
+         */
+        adminUpdateOrderStatus: async function (orderId, newStatus, notes) {
+            const client = this.getClient();
+            const now = new Date();
+            const displayDate = now.toLocaleString('en-IN', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+                timeZone: 'Asia/Kolkata'
+            }) + ' IST';
+
+            if (!client) {
+                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.updateOrderStatusInCloud === 'function') {
+                    const ok = await window.PaloraPDFOrder.updateOrderStatusInCloud(orderId, newStatus, notes);
+                    return { success: ok, order: null, error: ok ? null : 'Failed to update order status.' };
+                }
+                return { success: false, order: null, error: 'Database backend not configured.' };
+            }
+
+            try {
+                // Fetch current status history to append
+                const getRes = await client
+                    .from('orders')
+                    .select('status_history, admin_notes')
+                    .eq('order_id', orderId)
+                    .single();
+
+                let history = [];
+                if (getRes.data && Array.isArray(getRes.data.status_history)) {
+                    history = getRes.data.status_history;
+                }
+
+                history.push({
+                    status: newStatus,
+                    timestamp: now.toISOString(),
+                    formattedDate: displayDate,
+                    notes: notes || `Status updated to ${newStatus} by Store Admin`
+                });
+
+                const payload = {
+                    status: newStatus,
+                    status_history: history,
+                    updated_at: now.toISOString()
+                };
+                if (typeof notes === 'string') {
+                    payload.admin_notes = notes;
+                }
+
+                const res = await client
+                    .from('orders')
+                    .update(payload)
+                    .eq('order_id', orderId)
+                    .select()
+                    .single();
+
+                if (res.error) {
+                    if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.updateOrderStatusInCloud === 'function') {
+                        const ok = await window.PaloraPDFOrder.updateOrderStatusInCloud(orderId, newStatus, notes);
+                        return { success: ok, order: null, error: ok ? null : res.error.message };
+                    }
+                    return { success: false, order: null, error: res.error.message };
+                }
+
+                return { success: true, order: res.data, error: null };
+            } catch (err) {
+                return { success: false, order: null, error: err.message };
+            }
+        },
+
+        /**
+         * Delete an order record by orderId
+         * @param {string} orderId
+         * @returns {Promise<{ success: boolean, error: string|null }>}
+         */
+        adminDeleteOrder: async function (orderId) {
+            const client = this.getClient();
+            if (!client) {
+                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.deleteOrderInCloud === 'function') {
+                    const ok = await window.PaloraPDFOrder.deleteOrderInCloud(orderId);
+                    return { success: ok, error: ok ? null : 'Failed to delete order.' };
+                }
+                return { success: false, error: 'Database backend not configured.' };
+            }
+
+            try {
+                const res = await client
+                    .from('orders')
+                    .delete()
+                    .eq('order_id', orderId);
+
+                if (res.error) {
+                    if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.deleteOrderInCloud === 'function') {
+                        const ok = await window.PaloraPDFOrder.deleteOrderInCloud(orderId);
+                        return { success: ok, error: ok ? null : res.error.message };
+                    }
+                    return { success: false, error: res.error.message };
+                }
+
+                return { success: true, error: null };
+            } catch (err) {
+                return { success: false, error: err.message };
+            }
+        },
+
+        /**
+         * Fetch all customers (combines profiles table and distinct orders)
+         * @returns {Promise<Array>}
+         */
+        adminFetchCustomers: async function () {
+            const client = this.getClient();
+            const customersMap = {};
+
+            // 1. Fetch from profiles table
+            if (client) {
+                try {
+                    const profRes = await client
+                        .from('profiles')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (!profRes.error && Array.isArray(profRes.data)) {
+                        profRes.data.forEach(p => {
+                            const key = p.email || p.id;
+                            customersMap[key] = {
+                                id: p.id,
+                                email: p.email || '',
+                                fullName: p.full_name || 'Registered Customer',
+                                phone: p.phone || '',
+                                role: p.role || 'customer',
+                                address: p.delivery_address || '',
+                                city: p.city || '',
+                                state: p.state || '',
+                                pincode: p.pincode || '',
+                                ordersCount: 0,
+                                totalSpent: 0,
+                                orders: [],
+                                registeredAt: p.created_at
+                            };
+                        });
+                    }
+                } catch (e) {
+                    console.warn('PaloraSupabase: adminFetchCustomers profiles warning', e);
+                }
+            }
+
+            // 2. Fetch and aggregate orders data
+            try {
+                const orders = await this.adminFetchAllOrders();
+                orders.forEach(ord => {
+                    const email = (ord.customer_email || '').toLowerCase().trim();
+                    const phone = (ord.customer_mobile || '').trim();
+                    const key = email || phone || ord.customer_name || 'guest_' + ord.order_id;
+
+                    if (!customersMap[key]) {
+                        customersMap[key] = {
+                            id: ord.customer_id || null,
+                            email: ord.customer_email || '',
+                            fullName: ord.customer_name || 'Store Customer',
+                            phone: ord.customer_mobile || '',
+                            role: 'customer',
+                            address: ord.delivery_address || '',
+                            city: ord.city || '',
+                            state: ord.state || '',
+                            pincode: ord.pincode || '',
+                            ordersCount: 0,
+                            totalSpent: 0,
+                            orders: [],
+                            registeredAt: ord.created_at
+                        };
+                    }
+
+                    customersMap[key].ordersCount++;
+                    if (typeof ord.subtotal === 'number' && !isNaN(ord.subtotal)) {
+                        customersMap[key].totalSpent += ord.subtotal;
+                    }
+                    customersMap[key].orders.push({
+                        orderId: ord.order_id,
+                        date: ord.formatted_date || ord.created_at,
+                        status: ord.status,
+                        subtotal: ord.subtotal,
+                        itemsCount: (ord.items || []).length
+                    });
+                });
+            } catch (e) {
+                console.warn('PaloraSupabase: adminFetchCustomers orders aggregation warning', e);
+            }
+
+            return Object.values(customersMap);
+        },
+
+        // ====================================================================
+        // CUSTOMER CART TRACKING APIs (Live Cart Sync & Admin Inspector)
+        // ====================================================================
+
+        /**
+         * Asynchronously synchronize customer cart snapshot to 'cart_activity' table
+         * @param {string} sessionId
+         * @param {Array} items
+         * @param {Object} [customerDetails]
+         */
+        syncCartActivity: async function (sessionId, items, customerDetails) {
+            const client = this.getClient();
+            if (!client || !sessionId) return;
+
+            try {
+                const user = await this.getCurrentUser();
+                const cartItems = Array.isArray(items) ? items : [];
+                const totalQty = cartItems.reduce((s, it) => s + (parseInt(it.quantity, 10) || 1), 0);
+                let cartTotal = 0;
+                cartItems.forEach(it => {
+                    if (typeof it.price === 'number') {
+                        cartTotal += (it.price * (parseInt(it.quantity, 10) || 1));
+                    }
+                });
+
+                const cust = customerDetails || {};
+                const payload = {
+                    session_id: sessionId,
+                    customer_id: user ? user.id : null,
+                    customer_name: (cust.fullName || '').trim() || null,
+                    customer_phone: (cust.mobileNumber || '').trim() || null,
+                    customer_email: user ? user.email : ((cust.email || '').trim() || null),
+                    items: cartItems,
+                    total_items: totalQty,
+                    cart_total: cartTotal,
+                    last_updated: new Date().toISOString()
+                };
+
+                await client
+                    .from('cart_activity')
+                    .upsert(payload, { onConflict: 'session_id' });
+            } catch (err) {
+                // Silently ignore tracking sync errors on network failure
+            }
+        },
+
+        /**
+         * Fetch all active/recent cart activities (Admin only)
+         * @returns {Promise<Array>}
+         */
+        adminFetchCartActivity: async function () {
+            const client = this.getClient();
+            if (!client) return [];
+
+            try {
+                const res = await client
+                    .from('cart_activity')
+                    .select('*')
+                    .order('last_updated', { ascending: false })
+                    .limit(100);
+
+                if (res.error) {
+                    console.info('PaloraSupabase: adminFetchCartActivity query notice:', res.error.message);
+                    return [];
+                }
+
+                return res.data || [];
+            } catch (err) {
+                return [];
+            }
+        },
+
+        /**
+         * Delete a cart activity session row (Admin only)
+         * @param {string} sessionId
+         * @returns {Promise<{ success: boolean, error: string|null }>}
+         */
+        adminDeleteCartActivity: async function (sessionId) {
+            const client = this.getClient();
+            if (!client || !sessionId) return { success: false, error: 'Database backend not configured.' };
+
+            try {
+                const res = await client
+                    .from('cart_activity')
+                    .delete()
+                    .eq('session_id', sessionId);
+
+                if (res.error) return { success: false, error: res.error.message };
+                return { success: true, error: null };
+            } catch (err) {
+                return { success: false, error: err.message };
             }
         }
     };

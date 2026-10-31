@@ -156,6 +156,8 @@
             return;
         }
 
+        const groups = window.PaloraCart ? window.PaloraCart.getCartGroupedByCategory() : [];
+
         // Totals calculation
         let totalQty = 0;
         let totalPrice = 0;

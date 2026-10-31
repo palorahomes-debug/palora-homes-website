@@ -49,8 +49,9 @@ exports.handler = async function (event, context) {
     }
 
     // 2. Validate Supabase Configuration
-    const supabaseUrl = process.env.SUPABASE_URL ? process.env.SUPABASE_URL.replace(/\/+$/, '') : '';
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+    const rawUrl = (process.env.SUPABASE_URL || '').trim();
+    const supabaseUrl = rawUrl.replace(/\/+$/, '').replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
+    const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 
     if (!supabaseUrl || !supabaseKey) {
         return {

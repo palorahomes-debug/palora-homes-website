@@ -627,6 +627,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Asynchronously record inquiry into Supabase database
+            try {
+                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.createAndSaveOrder === 'function') {
+                    const custDetails = {
+                        fullName: name,
+                        mobileNumber: phone || 'Not provided',
+                        address: 'General Inquiry via Website Form',
+                        city: 'Online Inquiry',
+                        state: '',
+                        pincode: '',
+                        notes: `Category: ${category} | Message: ${message}`
+                    };
+                    const inquiryItem = [{
+                        id: 'general-inquiry',
+                        title: `Store Inquiry: ${category}`,
+                        categoryName: category,
+                        quantity: 1,
+                        price: null,
+                        specs: message.substring(0, 120)
+                    }];
+                    window.PaloraPDFOrder.createAndSaveOrder(custDetails, inquiryItem);
+                }
+            } catch (err) {
+                console.info('PaloraHomes: Inquiry record saved locally.', err);
+            }
+
             let msg = `Hello Palora Homes, I would like to submit an inquiry:\n\n`;
             msg += `*Name:* ${name}\n`;
             if (phone) msg += `*WhatsApp:* ${phone}\n`;

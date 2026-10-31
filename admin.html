@@ -3,822 +3,731 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Order Management Dashboard | Palora Homes</title>
-    <meta name="description" content="Secure Store Administration & Customer Order Inquiries Management Dashboard for Palora Homes.">
-    
+    <title>Store Admin Dashboard | Palora Homes</title>
+    <meta name="description" content="Official Store Administration, Order Management, Product Catalog & Live Cart Tracking Dashboard for Palora Homes.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="assets/images/deer-floating-shelves.jpg" type="image/jpeg">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/styles.css">
-    
-    <style>
-        :root {
-            --admin-bg: #F8F5F0;
-            --admin-card-bg: #FFFFFF;
-            --admin-sidebar-bg: #26170E;
-        }
-
-        body.admin-body {
-            background-color: var(--admin-bg);
-            color: #2C1E14;
-            font-family: var(--font-sans);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-
-        .admin-nav-bar {
-            background-color: #26170E;
-            color: #FFFFFF;
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .admin-nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .admin-nav-logo {
-            font-family: var(--font-serif);
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            color: #FFFFFF;
-            text-decoration: none;
-        }
-
-        .admin-nav-badge {
-            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
-            color: #FFFFFF;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 12px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .admin-nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .admin-nav-link {
-            color: #E6DFD5;
-            font-size: 0.82rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .admin-nav-link:hover {
-            color: var(--color-gold);
-        }
-
-        .btn-admin-logout {
-            background: rgba(255,255,255,0.12);
-            color: #FFFFFF;
-            border: 1px solid rgba(255,255,255,0.25);
-            padding: 6px 14px;
-            border-radius: var(--radius-full);
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-admin-logout:hover {
-            background: #DC2626;
-            border-color: #DC2626;
-        }
-
-        /* Container Layout */
-        .admin-layout-container {
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 24px 20px 60px;
-        }
-
-        /* Metric Cards Grid */
-        .admin-metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .admin-metric-card {
-            background-color: #FFFFFF;
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            padding: 18px 20px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            transition: var(--transition);
-        }
-
-        .admin-metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .metric-label {
-            font-size: 0.74rem;
-            color: var(--color-brown-600);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .metric-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--color-brown-950);
-            line-height: 1;
-        }
-
-        .metric-card-pending .metric-value { color: #D97706; }
-        .metric-card-confirmed .metric-value { color: #166534; }
-        .metric-card-dispatched .metric-value { color: #2563EB; }
-        .metric-card-pieces .metric-value { color: var(--color-gold-dark); }
-
-        /* Notification & Integration Status Banner */
-        .admin-notif-banner {
-            background-color: #FFFFFF;
-            border: 1px solid #E2D7C5;
-            border-left: 4px solid var(--color-gold);
-            border-radius: 8px;
-            padding: 14px 20px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .notif-banner-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .notif-banner-icon {
-            font-size: 1.5rem;
-        }
-
-        .notif-banner-text strong {
-            display: block;
-            font-size: 0.88rem;
-            color: var(--color-brown-950);
-        }
-
-        .notif-banner-text span {
-            font-size: 0.78rem;
-            color: var(--color-brown-600);
-        }
-
-        .notif-banner-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-test-notif,
-        .btn-toggle-notif {
-            padding: 7px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-test-notif {
-            background-color: #F8F5F0;
-            border: 1px solid var(--color-border);
-            color: var(--color-brown-800);
-        }
-
-        .btn-test-notif:hover {
-            background-color: var(--color-cream);
-            border-color: var(--color-gold);
-        }
-
-        .btn-toggle-notif {
-            background-color: #10B981;
-            color: #FFFFFF;
-            border: none;
-        }
-
-        .btn-toggle-notif:hover {
-            background-color: #059669;
-        }
-
-        /* Filter & Controls Panel */
-        .admin-controls-card {
-            background-color: #FFFFFF;
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-box-wrap {
-            position: relative;
-            flex: 2;
-            min-width: 260px;
-        }
-
-        .search-box-wrap svg {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #888;
-            pointer-events: none;
-        }
-
-        .admin-search-input {
-            width: 100%;
-            padding: 10px 14px 10px 38px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            font-size: 0.86rem;
-            color: var(--color-brown-950);
-            background-color: #FAF7F2;
-            transition: var(--transition);
-        }
-
-        .admin-search-input:focus {
-            background-color: #FFFFFF;
-            border-color: var(--color-gold);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(197, 155, 63, 0.16);
-        }
-
-        .admin-filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .admin-status-dropdown {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            font-size: 0.86rem;
-            background-color: #FFFFFF;
-            color: var(--color-brown-900);
-            font-weight: 500;
-        }
-
-        .admin-export-btns {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-export-tool {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 9px 14px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            background-color: #FFFFFF;
-            color: var(--color-brown-800);
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-export-tool:hover {
-            background-color: var(--color-cream);
-            border-color: var(--color-gold);
-            color: var(--color-gold-dark);
-        }
-
-        /* Orders Data Table */
-        .admin-table-card {
-            background-color: #FFFFFF;
-            border: 1px solid var(--color-border);
-            border-radius: 14px;
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .admin-orders-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.84rem;
-            text-align: left;
-        }
-
-        .admin-orders-table th {
-            background-color: #2C1E14;
-            color: #FFFFFF;
-            padding: 14px 16px;
-            font-weight: 600;
-            font-size: 0.78rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .admin-orders-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #EFEAE3;
-            vertical-align: top;
-        }
-
-        .admin-orders-table tr:hover td {
-            background-color: #FAF7F2;
-        }
-
-        .inquiry-id-tag {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--color-brown-950);
-            background-color: #FAF4EB;
-            padding: 3px 8px;
-            border-radius: 4px;
-            border: 1px solid #E5DC CE;
-            display: inline-block;
-            font-size: 0.88rem;
-        }
-
-        .order-date-text {
-            font-size: 0.72rem;
-            color: var(--color-brown-600);
-            margin-top: 4px;
-        }
-
-        .customer-name-text {
-            font-weight: 700;
-            color: var(--color-brown-950);
-            font-size: 0.9rem;
-        }
-
-        .customer-contact-text {
-            font-size: 0.76rem;
-            color: var(--color-brown-700);
-            margin-top: 2px;
-        }
-
-        .customer-addr-text {
-            font-size: 0.72rem;
-            color: #777;
-            margin-top: 2px;
-            max-width: 240px;
-            line-height: 1.35;
-        }
-
-        .order-notes-chip {
-            display: inline-block;
-            margin-top: 4px;
-            font-size: 0.7rem;
-            color: #B45309;
-            background-color: #FEF3C7;
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid #FCD34D;
-            line-height: 1.25;
-            max-width: 240px;
-        }
-
-        .status-badge-select {
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            border: 1px solid #CCC;
-            background-color: #FFF;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .status-badge-select.status-pending { background-color: #FFFBEB; border-color: #FCD34D; color: #B45309; }
-        .status-badge-select.status-confirmed { background-color: #F0FDF4; border-color: #86EFAC; color: #166534; }
-        .status-badge-select.status-packaging { background-color: #FEF3C7; border-color: #FDE68A; color: #92400E; }
-        .status-badge-select.status-dispatched { background-color: #EFF6FF; border-color: #93C5FD; color: #1D4ED8; }
-        .status-badge-select.status-delivered { background-color: #ECFDF5; border-color: #6EE7B7; color: #047857; }
-        .status-badge-select.status-cancelled { background-color: #FEF2F2; border-color: #FCA5A5; color: #B91C1C; }
-
-        .table-actions-cell {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .btn-table-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 10px;
-            border-radius: var(--radius-sm);
-            font-size: 0.74rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: var(--transition);
-            white-space: nowrap;
-        }
-
-        .btn-action-pdf {
-            background-color: var(--color-brown-900);
-            color: #FFFFFF;
-            border: none;
-        }
-
-        .btn-action-pdf:hover {
-            background-color: var(--color-gold);
-            color: var(--color-brown-950);
-        }
-
-        .btn-action-print {
-            background-color: #FFFFFF;
-            color: var(--color-brown-800);
-            border: 1px solid var(--color-border);
-        }
-
-        .btn-action-print:hover {
-            background-color: var(--color-cream);
-        }
-
-        .btn-action-wa {
-            background-color: #ECFDF5;
-            color: #047857;
-            border: 1px solid #10B981;
-        }
-
-        .btn-action-wa:hover {
-            background-color: #10B981;
-            color: #FFFFFF;
-        }
-
-        .btn-action-view {
-            background-color: #F8F5F0;
-            color: var(--color-brown-700);
-            border: 1px solid #E6DED2;
-        }
-
-        .btn-action-view:hover {
-            background-color: var(--color-cream);
-            color: var(--color-brown-950);
-        }
-
-        .btn-action-del {
-            background-color: #FFF;
-            color: #DC2626;
-            border: 1px solid #FECACA;
-        }
-
-        .btn-action-del:hover {
-            background-color: #FEE2E2;
-        }
-
-        /* PIN Login Overlay */
-        .admin-login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(38, 23, 14, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 99999;
-        }
-
-        .admin-login-card {
-            background: #FFFFFF;
-            width: 100%;
-            max-width: 440px;
-            border-radius: 18px;
-            padding: 38px 32px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-            text-align: center;
-            border: 1px solid var(--color-border);
-        }
-
-        .login-lock-circle {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-brown-900), var(--color-gold));
-            color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin: 0 auto 18px;
-            box-shadow: 0 8px 24px rgba(197, 155, 63, 0.35);
-        }
-
-        .login-title {
-            font-family: var(--font-serif);
-            font-size: 1.55rem;
-            color: var(--color-brown-950);
-            margin-bottom: 6px;
-        }
-
-        .login-sub {
-            font-size: 0.84rem;
-            color: var(--color-brown-600);
-            margin-bottom: 24px;
-            line-height: 1.45;
-        }
-
-        .login-pin-input {
-            width: 100%;
-            padding: 12px;
-            text-align: center;
-            font-size: 1.4rem;
-            letter-spacing: 6px;
-            font-weight: 700;
-            border: 2px solid var(--color-border);
-            border-radius: 10px;
-            margin-bottom: 12px;
-            transition: var(--transition);
-        }
-
-        .login-pin-input:focus {
-            outline: none;
-            border-color: var(--color-gold);
-            box-shadow: 0 0 0 4px rgba(197, 155, 63, 0.2);
-        }
-
-        .login-error-msg {
-            color: #DC2626;
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .btn-login-submit {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
-            color: #FFFFFF;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(197, 155, 63, 0.35);
-            transition: var(--transition);
-        }
-
-        .btn-login-submit:hover {
-            filter: brightness(1.06);
-            transform: translateY(-2px);
-        }
-
-        .login-hint {
-            font-size: 0.74rem;
-            color: #888;
-            margin-top: 14px;
-        }
-
-        /* Order Details Modal */
-        .order-modal-details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 640px) {
-            .order-modal-details-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 <body class="admin-body">
 
-    <!-- Top Admin Navigation Bar -->
-    <header class="admin-nav-bar">
-        <div class="admin-nav-brand">
-            <a href="index.html" class="admin-nav-logo">PALORA HOMES</a>
-            <span class="admin-nav-badge">Admin Dashboard</span>
+    <!-- ====================================================================
+         1. SIDEBAR NAVIGATION
+         ==================================================================== -->
+    <aside class="admin-sidebar" id="adminSidebar" aria-label="Administrator Sidebar Navigation">
+        <!-- Sidebar Brand Header -->
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-brand-logo" title="Back to Palora Homes Storefront">
+                <div class="sidebar-brand-icon">
+                    🏛️
+                </div>
+                <div class="sidebar-brand-text">
+                    <span class="sidebar-brand-name">PALORA HOMES</span>
+                    <span class="sidebar-brand-sub">Store Admin Portal</span>
+                </div>
+            </a>
         </div>
-        <div class="admin-nav-actions">
-            <span id="cloudStatusBadge" class="cloud-status-badge" style="font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.1); color: #E6DFD5;" title="Database Connection Status">
-                ⏳ Checking Cloud...
-            </span>
-            <a href="index.html" class="admin-nav-link" target="_blank">Storefront &rarr;</a>
-            <a href="cart.html" class="admin-nav-link" target="_blank">Shopping Cart &rarr;</a>
-            <button type="button" class="btn-admin-logout" id="btnLogoutNav">
-                🔒 Logout
+
+        <!-- Sidebar Navigation Menu -->
+        <ul class="sidebar-nav-list" role="navigation">
+            <li class="sidebar-nav-item">
+                <button type="button" class="sidebar-nav-btn active" data-view="overview">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard Overview</span>
+                </button>
+            </li>
+            <li class="sidebar-nav-item">
+                <button type="button" class="sidebar-nav-btn" data-view="products">
+                    <span class="nav-icon">🛍️</span>
+                    <span>Product Catalog</span>
+                </button>
+            </li>
+            <li class="sidebar-nav-item">
+                <button type="button" class="sidebar-nav-btn" data-view="orders">
+                    <span class="nav-icon">📦</span>
+                    <span>Orders &amp; Inquiries</span>
+                    <span class="nav-badge" id="badgeSidebarOrders">0</span>
+                </button>
+            </li>
+            <li class="sidebar-nav-item">
+                <button type="button" class="sidebar-nav-btn" data-view="cart">
+                    <span class="nav-icon">🛒</span>
+                    <span>Live Cart Tracking</span>
+                    <span class="nav-badge" id="badgeSidebarCart">0</span>
+                </button>
+            </li>
+            <li class="sidebar-nav-item">
+                <button type="button" class="sidebar-nav-btn" data-view="customers">
+                    <span class="nav-icon">👥</span>
+                    <span>Customer Directory</span>
+                </button>
+            </li>
+            <li class="sidebar-nav-item">
+                <button type="button" class="sidebar-nav-btn" data-view="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings &amp; Cloud</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Sidebar Footer & Admin User Card -->
+        <div class="sidebar-footer">
+            <div class="sidebar-user-pill">
+                <div class="user-avatar" id="sidebarUserAvatar">A</div>
+                <div class="user-meta">
+                    <span class="user-email" id="sidebarUserEmail">admin@palorahomes.com</span>
+                    <span class="user-role">Store Administrator</span>
+                </div>
+            </div>
+
+            <a href="index.html" class="btn-sidebar-storefront" target="_blank">
+                <span>← View Live Storefront</span>
+            </a>
+
+            <button type="button" class="btn-nav-logout btn-logout-trigger" style="width: 100%; justify-content: center; display: flex;">
+                🚪 Sign Out
             </button>
         </div>
-    </header>
+    </aside>
 
-    <!-- Main Dashboard Container -->
-    <main class="admin-layout-container" id="adminMainContent">
-        <!-- Overview Metrics Tiles -->
-        <section class="admin-metrics-grid" aria-label="Order Inquiry Metrics">
-            <div class="admin-metric-card">
-                <span class="metric-label">Total Inquiries</span>
-                <span class="metric-value" id="metricTotal">0</span>
-            </div>
-            <div class="admin-metric-card metric-card-pending">
-                <span class="metric-label">Pending Confirmation</span>
-                <span class="metric-value" id="metricPending">0</span>
-            </div>
-            <div class="admin-metric-card metric-card-confirmed">
-                <span class="metric-label">Confirmed Orders</span>
-                <span class="metric-value" id="metricConfirmed">0</span>
-            </div>
-            <div class="admin-metric-card metric-card-dispatched">
-                <span class="metric-label">Packaging / Dispatched</span>
-                <span class="metric-value" id="metricDispatched">0</span>
-            </div>
-            <div class="admin-metric-card metric-card-pieces">
-                <span class="metric-label">Total Pieces Requested</span>
-                <span class="metric-value" id="metricPieces">0</span>
-            </div>
-        </section>
-
-        <!-- Business Notification Integration Banner -->
-        <section class="admin-notif-banner" aria-label="Business Notifications Status">
-            <div class="notif-banner-left">
-                <div class="notif-banner-icon">🔔</div>
-                <div class="notif-banner-text">
-                    <strong id="notifStatusTitle">Business Alerts &amp; Notifications Active</strong>
-                    <span id="notifStatusSub">Desktop notifications alert the store owner on new customer inquiries. Webhook integrations supported.</span>
+    <!-- ====================================================================
+         2. MAIN CONTENT WRAPPER & TOP NAV
+         ==================================================================== -->
+    <div class="admin-main-wrapper">
+        <!-- Sticky Top Navigation Bar -->
+        <header class="admin-top-nav">
+            <div class="top-nav-left">
+                <button type="button" class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation Menu">
+                    ☰
+                </button>
+                <div class="top-nav-breadcrumbs">
+                    <h1 class="top-nav-title" id="topNavTitle">Dashboard Overview</h1>
+                    <span class="top-nav-sub" id="topNavSub">Real-time sales, order inquiries, product inventory, and customer metrics</span>
                 </div>
             </div>
-            <div class="notif-banner-actions">
-                <button type="button" class="btn-test-notif" id="btnTestNotification">
-                    🔔 Test Notification
-                </button>
-                <button type="button" class="btn-toggle-notif" id="btnEnableBrowserNotif">
-                    Enable Desktop Alerts
-                </button>
-            </div>
-        </section>
 
-        <!-- Search & Filters Toolbar -->
-        <section class="admin-controls-card">
-            <div class="search-box-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input 
-                    type="text" 
-                    id="adminSearchBox" 
-                    class="admin-search-input" 
-                    placeholder="Search by Order ID (e.g. PH-2026...), Mobile Number, or Customer Name..."
-                    autocomplete="off"
-                >
-            </div>
+            <div class="top-nav-right">
+                <!-- Live Cloud Status Pill -->
+                <div class="cloud-status-badge" id="cloudStatusBadge" title="Live PostgreSQL connection governed by Row Level Security">
+                    <span class="cloud-status-dot"></span>
+                    <span id="cloudStatusText">Supabase Cloud Active</span>
+                </div>
 
-            <div class="admin-filter-group">
-                <select id="adminStatusSelect" class="admin-status-dropdown" aria-label="Filter orders by status">
-                    <option value="all">All Order Statuses</option>
-                    <option value="pending confirmation">Pending Confirmation</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="in packaging">In Packaging</option>
-                    <option value="dispatched">Dispatched</option>
-                    <option value="delivered">Delivered</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-            </div>
+                <!-- Refresh Button -->
+                <button type="button" class="btn-nav-action" id="btnRefreshAll" title="Refresh all live data from database">
+                    🔄 <span>Refresh</span>
+                </button>
 
-            <div class="admin-export-btns">
-                <button type="button" class="btn-export-tool" id="btnExportCSV" title="Export all orders to Excel / CSV format">
-                    📊 Export CSV
-                </button>
-                <button type="button" class="btn-export-tool" id="btnExportJSON" title="Backup full orders database in JSON">
-                    💾 Backup JSON
-                </button>
-                <button type="button" class="btn-export-tool" id="btnRefreshList" title="Refresh orders list">
-                    🔄 Refresh
+                <!-- Logout Trigger -->
+                <button type="button" class="btn-nav-logout btn-logout-trigger">
+                    Sign Out
                 </button>
             </div>
-        </section>
+        </header>
 
-        <!-- Orders Data Table -->
-        <section class="admin-table-card">
-            <div class="table-responsive">
-                <table class="admin-orders-table">
-                    <thead>
-                        <tr>
-                            <th>Inquiry No. &amp; Date</th>
-                            <th>Customer &amp; Delivery Details</th>
-                            <th>Products &amp; Quantities</th>
-                            <th>Pricing / Value</th>
-                            <th>Order Status</th>
-                            <th style="text-align: right;">Action Tools</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody">
-                        <!-- Populated dynamically -->
-                    </tbody>
-                </table>
-            </div>
-            <div style="padding: 14px 20px; font-size: 0.78rem; color: #777; background: #FAF7F2; border-top: 1px solid #EFEAE3; display: flex; justify-content: space-between; align-items: center;" id="tableFooterInfo">
-                <span>Showing orders</span>
-                <span>Palora Homes Business Management</span>
-            </div>
-        </section>
-    </main>
+        <!-- Main Content Area with View Panes -->
+        <main class="admin-content-area">
 
-    <!-- Order Full Details Modal -->
-    <div class="palora-order-modal-backdrop" id="adminOrderDetailsModal" aria-hidden="true">
-        <div class="palora-order-modal-card admin-history-card" role="dialog" aria-modal="true" style="max-width: 820px;">
-            <div class="admin-modal-header" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 1px solid var(--color-border);">
+            <!-- ================================================================
+                 VIEW 1: DASHBOARD OVERVIEW
+                 ================================================================ -->
+            <section class="dashboard-view-pane active" id="view-overview">
+                <!-- 6 Metric KPI Cards -->
+                <div class="overview-kpi-grid">
+                    <div class="kpi-card kpi-card-products">
+                        <div class="kpi-top-row">
+                            <span class="kpi-label">Total Products</span>
+                            <span class="kpi-icon">🛍️</span>
+                        </div>
+                        <span class="kpi-value" id="kpiTotalProducts">0</span>
+                        <span class="kpi-sub">Signature Handcrafted Items</span>
+                    </div>
+
+                    <div class="kpi-card kpi-card-orders">
+                        <div class="kpi-top-row">
+                            <span class="kpi-label">Total Orders</span>
+                            <span class="kpi-icon">📦</span>
+                        </div>
+                        <span class="kpi-value" id="kpiTotalOrders">0</span>
+                        <span class="kpi-sub">Lifetime Order Inquiries</span>
+                    </div>
+
+                    <div class="kpi-card kpi-card-pending">
+                        <div class="kpi-top-row">
+                            <span class="kpi-label">Pending Confirmation</span>
+                            <span class="kpi-icon">⏳</span>
+                        </div>
+                        <span class="kpi-value" id="kpiPendingOrders" style="color: #D97706;">0</span>
+                        <span class="kpi-sub">Requires Store Action</span>
+                    </div>
+
+                    <div class="kpi-card kpi-card-completed">
+                        <div class="kpi-top-row">
+                            <span class="kpi-label">Completed Orders</span>
+                            <span class="kpi-icon">✅</span>
+                        </div>
+                        <span class="kpi-value" id="kpiCompletedOrders" style="color: #166534;">0</span>
+                        <span class="kpi-sub">Confirmed &amp; Delivered</span>
+                    </div>
+
+                    <div class="kpi-card kpi-card-customers">
+                        <div class="kpi-top-row">
+                            <span class="kpi-label">Total Customers</span>
+                            <span class="kpi-icon">👥</span>
+                        </div>
+                        <span class="kpi-value" id="kpiTotalCustomers">0</span>
+                        <span class="kpi-sub">Unique Buyers &amp; Accounts</span>
+                    </div>
+
+                    <div class="kpi-card kpi-card-sales">
+                        <div class="kpi-top-row">
+                            <span class="kpi-label">Total Sales (Est.)</span>
+                            <span class="kpi-icon">💰</span>
+                        </div>
+                        <span class="kpi-value" id="kpiTotalSales" style="color: var(--admin-gold-dark);">₹0</span>
+                        <span class="kpi-sub">Calculated Order Subtotals</span>
+                    </div>
+                </div>
+
+                <!-- Split Grid: Recent Orders & Live Carts -->
+                <div class="overview-split-grid">
+                    <!-- Recent Orders -->
+                    <div class="dashboard-card">
+                        <div class="card-header-bar">
+                            <div class="card-title-wrap">
+                                <h3>📦 Recent Customer Orders</h3>
+                                <p>Latest incoming WhatsApp inquiries and placed orders</p>
+                            </div>
+                            <button type="button" class="btn-table-action" onclick="window.PaloraAdmin.switchView('orders')">
+                                View All Orders →
+                            </button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID &amp; Date</th>
+                                        <th>Customer</th>
+                                        <th>Subtotal</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overviewRecentOrdersTable">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Live Customer Carts -->
+                    <div class="dashboard-card">
+                        <div class="card-header-bar">
+                            <div class="card-title-wrap">
+                                <h3>🛒 Live Customer Carts</h3>
+                                <p>Active shopping carts in real time</p>
+                            </div>
+                            <button type="button" class="btn-table-action" onclick="window.PaloraAdmin.switchView('cart')">
+                                View Carts →
+                            </button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Session / Customer</th>
+                                        <th>Items</th>
+                                        <th>Value</th>
+                                        <th>Inspect</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overviewRecentCartsTable">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================
+                 VIEW 2: PRODUCT MANAGEMENT
+                 ================================================================ -->
+            <section class="dashboard-view-pane" id="view-products">
+                <!-- Toolbar: Search, Category Filter, and Add Product -->
+                <div class="admin-toolbar-card">
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="productSearchInput" class="admin-search-field" placeholder="Search products by title, ID, or specifications...">
+                    </div>
+
+                    <select id="productCategorySelect" class="filter-select" aria-label="Filter products by category">
+                        <option value="all">All Categories</option>
+                        <option value="wall-clock">Wall Clocks</option>
+                        <option value="wall-decor">Wall Decor</option>
+                        <option value="night-lamp">Night Lamps</option>
+                        <option value="wall-hanging">Wall Hangings</option>
+                        <option value="car-dashboard">Car Dashboard Decore</option>
+                        <option value="key-holder">Key Holders</option>
+                    </select>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-primary-admin" id="btnOpenAddProductModal">
+                            ➕ Add New Product
+                        </button>
+                        <button type="button" class="btn-secondary-admin" id="btnSeedCatalogToCloud" title="Sync all 23 signature handcrafted items from config.js to Supabase Cloud">
+                            🔄 Sync Catalog to Cloud
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="dashboard-card">
+                    <div class="admin-table-wrap">
+                        <table class="admin-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Details</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Availability</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================
+                 VIEW 3: ORDER MANAGEMENT
+                 ================================================================ -->
+            <section class="dashboard-view-pane" id="view-orders">
+                <!-- Toolbar: Search, Status Filter, Export Actions -->
+                <div class="admin-toolbar-card">
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="orderSearchInput" class="admin-search-field" placeholder="Search by Order ID (e.g. PH-2026...), Customer Name, Mobile, or City...">
+                    </div>
+
+                    <select id="orderStatusSelect" class="filter-select" aria-label="Filter orders by fulfillment status">
+                        <option value="all">All Order Statuses</option>
+                        <option value="pending confirmation">Pending Confirmation</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="in packaging">In Packaging</option>
+                        <option value="dispatched">Dispatched</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-secondary-admin" id="btnExportOrdersCSV">
+                            📊 Export CSV
+                        </button>
+                        <button type="button" class="btn-secondary-admin" id="btnBackupOrdersJSON">
+                            💾 Backup JSON
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="dashboard-card">
+                    <div class="admin-table-wrap">
+                        <table class="admin-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID &amp; Date</th>
+                                    <th>Customer &amp; Contact</th>
+                                    <th>Ordered Items Summary</th>
+                                    <th>Subtotal</th>
+                                    <th>Status</th>
+                                    <th>Fulfillment Tools</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================
+                 VIEW 4: CUSTOMER CART TRACKING
+                 ================================================================ -->
+            <section class="dashboard-view-pane" id="view-cart">
+                <div class="admin-toolbar-card">
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="cartSearchInput" class="admin-search-field" placeholder="Search live carts by session ID, customer name, or mobile...">
+                    </div>
+
+                    <button type="button" class="btn-secondary-admin" id="btnRefreshCartActivity">
+                        🔄 Refresh Carts
+                    </button>
+                </div>
+
+                <!-- Cart Activity Table -->
+                <div class="dashboard-card">
+                    <div class="card-header-bar">
+                        <div class="card-title-wrap">
+                            <h3>🛒 Active Customer &amp; Guest Shopping Carts</h3>
+                            <p>Real-time cart synchronization directly from visitor devices via Supabase Row Level Security</p>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer / Session</th>
+                                    <th>Contact</th>
+                                    <th>Pieces in Cart</th>
+                                    <th>Estimated Value</th>
+                                    <th>Last Activity</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cartActivityTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================
+                 VIEW 5: CUSTOMER DIRECTORY
+                 ================================================================ -->
+            <section class="dashboard-view-pane" id="view-customers">
+                <div class="admin-toolbar-card">
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="customerSearchInput" class="admin-search-field" placeholder="Search customers by name, mobile, email, or city...">
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="admin-table-wrap">
+                        <table class="admin-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer Name &amp; Role</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Shipping Location</th>
+                                    <th>Total Orders</th>
+                                    <th>Lifetime Spend</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================
+                 VIEW 6: SETTINGS & CLOUD HEALTH
+                 ================================================================ -->
+            <section class="dashboard-view-pane" id="view-settings">
+                <div class="dashboard-card" style="padding: 24px;">
+                    <h3 style="font-family: 'Cinzel', serif; font-size: 1.2rem; margin-bottom: 6px;">⚙️ Store Settings &amp; Supabase Cloud Diagnostics</h3>
+                    <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin-bottom: 24px;">Backend configuration parameters and environment security status</p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                        <div style="background: #FAF7F2; padding: 16px; border-radius: 8px; border: 1px solid #E8DFD3;">
+                            <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #888;">Supabase Project URL</span>
+                            <div style="font-weight: 700; font-family: monospace; font-size: 0.88rem; margin-top: 4px; word-break: break-all;" id="settingSupabaseUrl">Loading...</div>
+                        </div>
+
+                        <div style="background: #FAF7F2; padding: 16px; border-radius: 8px; border: 1px solid #E8DFD3;">
+                            <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #888;">Browser Public Anon Key</span>
+                            <div style="font-weight: 700; font-family: monospace; font-size: 0.88rem; margin-top: 4px;" id="settingSupabaseKey">Loading...</div>
+                        </div>
+
+                        <div style="background: #FAF7F2; padding: 16px; border-radius: 8px; border: 1px solid #E8DFD3;">
+                            <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #888;">Logged-in Admin Account</span>
+                            <div style="font-weight: 700; font-size: 0.88rem; margin-top: 4px;" id="settingAdminEmail">Loading...</div>
+                        </div>
+
+                        <div style="background: #FAF7F2; padding: 16px; border-radius: 8px; border: 1px solid #E8DFD3;">
+                            <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #888;">Role Status</span>
+                            <div style="font-weight: 700; font-size: 0.88rem; margin-top: 4px; color: #166534;" id="settingAdminRole">Store Administrator</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #FAF7F2; padding: 18px; border-radius: 8px; border: 1px solid #E8DFD3; margin-bottom: 24px;">
+                        <strong style="display: block; font-size: 0.92rem; margin-bottom: 4px;">🔔 Browser Desktop Notifications</strong>
+                        <p style="font-size: 0.78rem; color: #666; margin-bottom: 12px;">Receive audible desktop alerts on this computer when new customer inquiries are submitted.</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn-secondary-admin" id="btnTestDesktopNotif">
+                                🔔 Test Notification
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="background: #24160E; color: #FAF7F2; padding: 20px; border-radius: 8px;">
+                        <strong style="display: block; color: var(--admin-gold); font-size: 0.95rem; margin-bottom: 8px;">👑 How to Assign Admin Role in Supabase SQL Editor</strong>
+                        <p style="font-size: 0.82rem; color: #DDD; margin-bottom: 10px;">To designate an account as an authorized Store Administrator, run this query in your Supabase Dashboard (SQL Editor):</p>
+                        <pre style="background: #140B06; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; color: #4ADE80; overflow-x: auto;">UPDATE public.profiles SET role = 'admin' WHERE email = 'your-admin-email@gmail.com';</pre>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ====================================================================
+         3. PRODUCT ADD / EDIT MODAL
+         ==================================================================== -->
+    <div class="admin-modal-backdrop" id="modalProductEdit" role="dialog" aria-modal="true">
+        <div class="admin-modal-card">
+            <div class="modal-header-bar">
+                <h3 id="modalProductTitle">Add Handcrafted Product</h3>
+                <button type="button" class="modal-close-btn" onclick="window.PaloraAdmin.closeProductModal()">&times;</button>
+            </div>
+            <form id="formProductEdit">
+                <div class="modal-body-scroll">
+                    <input type="hidden" id="editProductId">
+
+                    <div class="modal-form-grid">
+                        <div class="form-group-admin form-full-col">
+                            <label for="editProductTitle">Product Title *</label>
+                            <input type="text" id="editProductTitle" class="admin-input-control" placeholder="e.g. Scalloped Geometric Roman Wooden Wall Clock" required>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label for="editProductCategory">Category *</label>
+                            <select id="editProductCategory" class="admin-input-control" required>
+                                <option value="wall-clock">Wall Clock</option>
+                                <option value="wall-decor">Wall Decor</option>
+                                <option value="night-lamp">Night Lamp</option>
+                                <option value="wall-hanging">Wall Hanging</option>
+                                <option value="car-dashboard">Car Dashboard Decore</option>
+                                <option value="key-holder">Key Holder</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label for="editProductPrice">Price in INR (₹)</label>
+                            <input type="number" id="editProductPrice" class="admin-input-control" placeholder="e.g. 1899 (Leave blank for Inquiry Quote)" min="0" step="1">
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label for="editProductStock">Stock Quantity *</label>
+                            <input type="number" id="editProductStock" class="admin-input-control" value="15" min="0" required>
+                        </div>
+
+                        <div class="form-group-admin">
+                            <label for="editProductSubtitle">Subtitle / Tagline</label>
+                            <input type="text" id="editProductSubtitle" class="admin-input-control" placeholder="e.g. Artisanal Living Accent &amp; Display Perches">
+                        </div>
+
+                        <div class="form-group-admin form-full-col">
+                            <label for="editProductSpecs">Specifications / Pack details</label>
+                            <input type="text" id="editProductSpecs" class="admin-input-control" placeholder="e.g. 14&quot; Diameter • Roman Numerals • Teak &amp; White Finish">
+                        </div>
+
+                        <div class="form-group-admin form-full-col">
+                            <label for="editProductImage">Image URL / Asset Path *</label>
+                            <input type="text" id="editProductImage" class="admin-input-control" placeholder="assets/images/... or https://..." required>
+                            <span style="font-size: 0.72rem; color: #888; margin-top: 4px;">Or upload photo directly to Supabase Storage:</span>
+                            <input type="file" id="productImageFileInput" accept="image/*" style="font-size: 0.8rem; margin-top: 4px;">
+                        </div>
+
+                        <div class="form-group-admin form-full-col">
+                            <label for="editProductDesc">Full Product Description</label>
+                            <textarea id="editProductDesc" class="admin-input-control" rows="3" placeholder="Handcrafted description highlighting artisanal value and material..."></textarea>
+                        </div>
+
+                        <div class="form-group-admin form-full-col" style="flex-direction: row; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="editProductAvailable" checked style="width: 18px; height: 18px; cursor: pointer;">
+                            <label for="editProductAvailable" style="cursor: pointer; text-transform: none;">Visible &amp; Available for Order on Customer Website</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-bar">
+                    <button type="button" class="btn-secondary-admin" onclick="window.PaloraAdmin.closeProductModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-primary-admin">
+                        💾 Save Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         4. ORDER DETAILS & FULFILLMENT MODAL
+         ==================================================================== -->
+    <div class="admin-modal-backdrop" id="modalOrderDetails" role="dialog" aria-modal="true">
+        <div class="admin-modal-card" style="max-width: 760px;">
+            <div class="modal-header-bar">
                 <div>
-                    <h2 style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--color-brown-950); margin: 0;" id="detailModalTitle">Order Details</h2>
-                    <span style="font-size: 0.78rem; color: #666;" id="detailModalDate">Date</span>
+                    <h3 id="orderModalTitle">Order Inquiry</h3>
+                    <span style="font-size: 0.76rem; color: #777;" id="orderModalDate">Date</span>
                 </div>
-                <button type="button" class="drawer-close-btn" id="btnCloseDetailsModal" style="background: none; border: none; font-size: 1.6rem; cursor: pointer;">&times;</button>
+                <button type="button" class="modal-close-btn" onclick="window.PaloraAdmin.closeOrderModal()">&times;</button>
             </div>
-            
-            <div id="detailModalBody" style="margin: 18px 0; max-height: 60vh; overflow-y: auto;">
+            <div class="modal-body-scroll">
+                <div id="orderModalBody">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Status Update Box -->
+                <div style="background: #FAF7F2; padding: 16px; border-radius: 8px; border: 1px solid #E8DFD3; margin-top: 18px;">
+                    <label for="orderDetailStatusDropdown" style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">
+                        Update Fulfillment Status:
+                    </label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <select id="orderDetailStatusDropdown" class="admin-input-control" style="flex: 1; min-width: 200px;">
+                            <option value="Pending Confirmation">Pending Confirmation</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="In Packaging">In Packaging</option>
+                            <option value="Dispatched">Dispatched</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <button type="button" class="btn-primary-admin" id="btnSaveOrderStatus">
+                            Save Status Update
+                        </button>
+                    </div>
+
+                    <label for="orderDetailAdminNotes" style="display: block; font-size: 0.74rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">
+                        Internal Admin / Tracking Notes:
+                    </label>
+                    <textarea id="orderDetailAdminNotes" class="admin-input-control" rows="2" placeholder="e.g. Dispatched via BlueDart AWB# 123456789..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer-bar" style="justify-content: space-between;">
+                <div>
+                    <button type="button" class="btn-table-action delete" id="btnDeleteOrder" title="Permanently delete this order record">
+                        🗑️ Delete Order
+                    </button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn-secondary-admin" id="btnChatOrderWhatsApp">
+                        💬 Open WhatsApp Chat
+                    </button>
+                    <button type="button" class="btn-primary-admin" id="btnDownloadOrderPDF">
+                        📄 Download PDF Sheet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================================
+         5. CART INSPECTION MODAL
+         ==================================================================== -->
+    <div class="admin-modal-backdrop" id="modalCartInspect" role="dialog" aria-modal="true">
+        <div class="admin-modal-card" style="max-width: 600px;">
+            <div class="modal-header-bar">
+                <h3>Customer Cart Inspection</h3>
+                <button type="button" class="modal-close-btn" onclick="window.PaloraAdmin.closeCartModal()">&times;</button>
+            </div>
+            <div class="modal-body-scroll" id="cartInspectModalBody">
                 <!-- Populated dynamically -->
             </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 14px;">
-                <div id="detailModalActionsLeft" style="display: flex; gap: 8px;">
-                    <!-- Quick action buttons -->
-                </div>
-                <button type="button" class="btn-modal-close" id="btnCloseDetailsBottom" style="padding: 7px 18px; border-radius: 14px;">
+            <div class="modal-footer-bar">
+                <button type="button" class="btn-secondary-admin" onclick="window.PaloraAdmin.closeCartModal()">
                     Close
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Secure PIN Login Gate Overlay -->
+    <!-- ====================================================================
+         6. SECURE ADMIN LOGIN GATE OVERLAY
+         ==================================================================== -->
     <div class="admin-login-overlay" id="adminLoginGate">
-        <div class="admin-login-card">
-            <div class="login-lock-circle">🔒</div>
-            <h1 class="login-title">Palora Homes Admin</h1>
-            <p class="login-sub">Enter your store administrator PIN to access and manage customer orders and PDF sheets.</p>
-            
-            <form id="adminLoginForm">
-                <input 
-                    type="password" 
-                    id="loginPinInput" 
-                    class="login-pin-input" 
-                    placeholder="••••••••" 
-                    maxlength="16" 
-                    autofocus 
-                    required 
-                    autocomplete="current-password"
-                >
-                <div class="login-error-msg" id="loginErrorMsg">⚠️ Incorrect PIN. Please try again.</div>
-                
-                <button type="submit" class="btn-login-submit">
-                    Unlock Dashboard &rarr;
-                </button>
-            </form>
+        <div class="admin-login-box">
+            <div class="login-emblem">🔒</div>
+            <h1 class="login-title-h1">Palora Homes</h1>
+            <p class="login-desc-sub">Authorized Store Administrator Access Portal. Sign in with your Supabase Store Admin credentials.</p>
 
-            <div class="login-hint">
-                Store Administrator Protected &bull; Palora Homes
+            <!-- Navigation Tabs: Sign In / Initial Setup -->
+            <div class="login-tabs-bar" role="tablist">
+                <button type="button" class="login-tab-btn active" id="tabBtnSignIn">
+                    Admin Sign In
+                </button>
+                <button type="button" class="login-tab-btn" id="tabBtnSetup">
+                    Initial Setup / Help
+                </button>
+            </div>
+
+            <!-- Error / Success Feedback Alerts -->
+            <div class="login-error-alert" id="loginErrorAlert"></div>
+            <div class="login-success-alert" id="loginSuccessAlert"></div>
+
+            <!-- Pane 1: Admin Sign In -->
+            <div id="loginPaneSignIn">
+                <form id="adminLoginForm" class="login-form-inner">
+                    <div class="form-group-admin">
+                        <label for="loginEmail">Store Admin Email</label>
+                        <input type="email" id="loginEmail" class="admin-input-control" placeholder="admin@palorahomes.com" required autocomplete="email" autofocus>
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label for="loginPassword">Admin Password</label>
+                        <input type="password" id="loginPassword" class="admin-input-control" placeholder="••••••••••••" required autocomplete="current-password">
+                    </div>
+
+                    <button type="submit" class="btn-login-action">
+                        Unlock Dashboard →
+                    </button>
+                </form>
+            </div>
+
+            <!-- Pane 2: Initial Admin Setup Helper -->
+            <div id="loginPaneSetup" style="display: none; text-align: left;">
+                <p style="font-size: 0.8rem; color: #555; line-height: 1.4; margin-bottom: 12px;">
+                    Setting up for the first time? Register an account here, then assign yourself the <strong>admin</strong> role in Supabase.
+                </p>
+                <form id="formRegisterAdmin" class="login-form-inner">
+                    <div class="form-group-admin">
+                        <label for="setupName">Full Name</label>
+                        <input type="text" id="setupName" class="admin-input-control" placeholder="Store Owner" required>
+                    </div>
+                    <div class="form-group-admin">
+                        <label for="setupEmail">Email Address</label>
+                        <input type="email" id="setupEmail" class="admin-input-control" placeholder="owner@palorahomes.com" required>
+                    </div>
+                    <div class="form-group-admin">
+                        <label for="setupPassword">Password</label>
+                        <input type="password" id="setupPassword" class="admin-input-control" placeholder="••••••••••••" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-login-action" style="background: #24160E;">
+                        Create Supabase Account
+                    </button>
+                </form>
+                <div style="margin-top: 14px; padding: 10px; background: #FAF5ED; border: 1px solid #E8DFD3; border-radius: 6px; font-size: 0.74rem;">
+                    <strong>Next step in Supabase SQL Editor:</strong><br>
+                    <code>UPDATE public.profiles SET role = 'admin' WHERE email = 'your-email';</code>
+                </div>
+            </div>
+
+            <div class="login-footer-meta">
+                Protected by PostgreSQL Row Level Security &bull; Palora Homes
             </div>
         </div>
     </div>
+
+    <!-- Toast Notifications Portal -->
+    <div class="admin-toast-portal" id="adminToastPortal" aria-live="polite"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -829,545 +738,6 @@
     <script src="js/libs/jspdf.plugin.autotable.min.js"></script>
     <script src="js/pdf-order.js"></script>
     <script src="js/cart.js"></script>
-
-    <script>
-        (function () {
-            'use strict';
-
-            const gate = document.getElementById('adminLoginGate');
-            const pinForm = document.getElementById('adminLoginForm');
-            const pinInput = document.getElementById('loginPinInput');
-            const pinError = document.getElementById('loginErrorMsg');
-            const logoutBtn = document.getElementById('btnLogoutNav');
-            
-            const searchBox = document.getElementById('adminSearchBox');
-            const statusSelect = document.getElementById('adminStatusSelect');
-            const tableBody = document.getElementById('ordersTableBody');
-            const tableFooter = document.getElementById('tableFooterInfo');
-
-            // Metrics Elements
-            const mTotal = document.getElementById('metricTotal');
-            const mPending = document.getElementById('metricPending');
-            const mConfirmed = document.getElementById('metricConfirmed');
-            const mDispatched = document.getElementById('metricDispatched');
-            const mPieces = document.getElementById('metricPieces');
-
-            // Authentication check
-            function checkAuth() {
-                if (window.PaloraPDFOrder && window.PaloraPDFOrder.isAdminAuthenticated()) {
-                    gate.style.display = 'none';
-                    renderDashboard();
-                } else {
-                    gate.style.display = 'flex';
-                    if (pinInput) {
-                        pinInput.value = '';
-                        pinInput.focus();
-                    }
-                }
-            }
-
-            pinForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const pin = pinInput.value;
-                const submitBtn = pinForm.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Verifying PIN...';
-                }
-
-                try {
-                    const isValid = await window.PaloraPDFOrder.verifyAdminPin(pin);
-                    if (isValid) {
-                        pinError.style.display = 'none';
-                        gate.style.display = 'none';
-                        renderDashboard();
-                    } else {
-                        pinError.style.display = 'block';
-                        pinInput.value = '';
-                        pinInput.focus();
-                    }
-                } catch (err) {
-                    pinError.style.display = 'block';
-                    pinInput.value = '';
-                    pinInput.focus();
-                } finally {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Unlock Dashboard →';
-                    }
-                }
-            });
-
-            logoutBtn.addEventListener('click', function () {
-                if (window.PaloraPDFOrder) {
-                    window.PaloraPDFOrder.logoutAdmin();
-                }
-                checkAuth();
-            });
-
-            // Cloud Connection Indicator
-            async function updateCloudStatusIndicator() {
-                const badge = document.getElementById('cloudStatusBadge');
-                if (!badge || !window.PaloraPDFOrder) return;
-
-                try {
-                    const status = await window.PaloraPDFOrder.checkCloudStatus();
-                    if (status && status.supabaseConnected) {
-                        badge.innerHTML = '🟢 Supabase Cloud Active';
-                        badge.style.background = 'rgba(16, 185, 129, 0.2)';
-                        badge.style.color = '#34D399';
-                        badge.title = 'Multi-device cloud database connected via Netlify & Supabase.';
-                    } else if (status && status.supabaseConfigured) {
-                        badge.innerHTML = '⚠️ Supabase Connection Issue';
-                        badge.style.background = 'rgba(239, 68, 68, 0.2)';
-                        badge.style.color = '#F87171';
-                        badge.title = 'Configured in Netlify, but database table or connection error: ' + (status.error || 'Check Supabase SQL table.');
-                    } else {
-                        badge.innerHTML = '🟡 Local Mode (Supabase Setup Needed)';
-                        badge.style.background = 'rgba(245, 158, 11, 0.2)';
-                        badge.style.color = '#FBBF24';
-                        badge.title = 'Orders currently stored locally. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Netlify to enable cross-device cloud sync.';
-                    }
-                } catch (e) {
-                    badge.innerHTML = '🟡 Local Mode';
-                    badge.style.background = 'rgba(245, 158, 11, 0.2)';
-                    badge.style.color = '#FBBF24';
-                }
-            }
-
-            // Dashboard Rendering (Cloud-First with Local Fallback)
-            let cachedOrdersList = [];
-
-            async function renderDashboard() {
-                if (!window.PaloraPDFOrder) return;
-
-                updateCloudStatusIndicator();
-
-                const q = searchBox ? searchBox.value.trim() : '';
-                const filter = statusSelect ? statusSelect.value : 'all';
-
-                let orders = [];
-                let isCloud = false;
-
-                try {
-                    // 1. Fetch from Supabase Cloud API
-                    orders = await window.PaloraPDFOrder.fetchCloudOrders(q, filter);
-                    cachedOrdersList = orders;
-                    isCloud = true;
-                } catch (cloudErr) {
-                    // 2. Fallback to Local Storage
-                    orders = window.PaloraPDFOrder.searchOrders(q, filter);
-                }
-
-                // Compute Metrics
-                let allOrdersForMetrics = orders;
-                if (!q && filter === 'all') {
-                    allOrdersForMetrics = orders;
-                } else if (isCloud) {
-                    allOrdersForMetrics = cachedOrdersList.length > 0 ? cachedOrdersList : orders;
-                } else {
-                    allOrdersForMetrics = window.PaloraPDFOrder.getAllOrders();
-                }
-
-                let pending = 0;
-                let confirmed = 0;
-                let dispatched = 0;
-                let totalPieces = 0;
-
-                allOrdersForMetrics.forEach(function (o) {
-                    const st = (o.status || 'pending confirmation').toLowerCase();
-                    if (st === 'confirmed') confirmed++;
-                    else if (st === 'dispatched' || st === 'in packaging') dispatched++;
-                    else pending++;
-
-                    (o.items || []).forEach(function (it) {
-                        const q = parseInt(it.quantity, 10) || 1;
-                        let mult = it.packMultiplier || 1;
-                        if (!it.packMultiplier) {
-                            if (/pair|\b2\s*pcs\b/i.test(it.specs || '')) mult = 2;
-                            else if (/set of (\d+)/i.test(it.specs || '')) {
-                                const m = (it.specs || '').match(/set of (\d+)/i);
-                                if (m && m[1]) mult = parseInt(m[1], 10) || 1;
-                            }
-                        }
-                        totalPieces += (q * mult);
-                    });
-                });
-
-                if (mTotal) mTotal.textContent = allOrdersForMetrics.length;
-                if (mPending) mPending.textContent = pending;
-                if (mConfirmed) mConfirmed.textContent = confirmed;
-                if (mDispatched) mDispatched.textContent = dispatched;
-                if (mPieces) mPieces.textContent = totalPieces.toLocaleString('en-IN');
-
-                renderTableRows(orders, allOrdersForMetrics.length, isCloud);
-            }
-
-            function renderTableRows(ordersList, totalCount, isCloud) {
-                if (!window.PaloraPDFOrder) return;
-
-                const orders = Array.isArray(ordersList) ? ordersList : [];
-                const total = typeof totalCount === 'number' ? totalCount : orders.length;
-
-                if (tableFooter) {
-                    tableFooter.innerHTML = `
-                        <span>Showing <strong>${orders.length}</strong> of <strong>${total}</strong> customer order inquiries ${isCloud ? '<em>(Supabase Cloud Synced)</em>' : '<em>(Local Storage)</em>'}</span>
-                        <span>Palora Homes Business Management</span>
-                    `;
-                }
-
-                if (orders.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
-                                <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
-                                <strong>No customer order inquiries match your search.</strong>
-                                <p style="font-size: 0.8rem; margin-top: 4px;">Orders placed via WhatsApp with customer details will appear here automatically.</p>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                tableBody.innerHTML = orders.map(function (o) {
-                    const cust = o.customer || {};
-                    const items = o.items || [];
-                    let qty = 0;
-                    let subtotal = 0;
-                    let hasPrices = false;
-
-                    items.forEach(function (it) {
-                        const q = parseInt(it.quantity, 10) || 1;
-                        qty += q;
-                        if (typeof it.price === 'number' && !isNaN(it.price)) {
-                            hasPrices = true;
-                            subtotal += (it.price * q);
-                        }
-                    });
-
-                    const currentStatus = o.status || 'Pending Confirmation';
-                    const statusClass = getStatusClass(currentStatus);
-
-                    return `
-                        <tr data-order-row-id="${escapeHtml(o.orderId)}">
-                            <td>
-                                <span class="inquiry-id-tag">${escapeHtml(o.orderId)}</span>
-                                <div class="order-date-text">📅 ${escapeHtml(o.formattedDate || '')}</div>
-                            </td>
-                            <td>
-                                <div class="customer-name-text">${escapeHtml(cust.fullName || cust.name || cust.customer_name || 'Valued Customer')}</div>
-                                <div class="customer-contact-text">
-                                    📱 <a href="tel:+91${escapeHtml(cust.mobileNumber || cust.mobile || cust.phone || cust.customer_mobile || '')}" style="color: inherit; text-decoration: none; font-weight: 600;">+91 ${escapeHtml(cust.mobileNumber || cust.mobile || cust.phone || cust.customer_mobile || '')}</a>
-                                </div>
-                                <div class="customer-addr-text">
-                                    📍 ${escapeHtml(cust.city || '')}${cust.city && cust.state ? ', ' : ''}${escapeHtml(cust.state || '')} ${cust.pincode ? '- ' + escapeHtml(cust.pincode) : ''}
-                                </div>
-                                ${cust.notes ? `<div class="order-notes-chip" title="${escapeHtml(cust.notes)}">💬 "${escapeHtml(cust.notes.slice(0, 32))}${cust.notes.length > 32 ? '...' : ''}"</div>` : ''}
-                            </td>
-                            <td>
-                                <div><strong>${items.length} Distinct Products</strong></div>
-                                <div style="font-size: 0.76rem; color: #666; margin-top: 2px;">Total Units: ${qty} packs</div>
-                                <div style="font-size: 0.72rem; color: #888; margin-top: 3px;">
-                                    ${items.slice(0, 2).map(it => escapeHtml(it.title)).join(', ')}${items.length > 2 ? ' +' + (items.length - 2) + ' more' : ''}
-                                </div>
-                            </td>
-                            <td>
-                                ${hasPrices 
-                                    ? `<strong style="color: var(--color-brown-950); font-size: 0.95rem;">₹${subtotal.toLocaleString('en-IN')}</strong><div style="font-size: 0.7rem; color: #166534;">Verified Subtotal</div>` 
-                                    : `<span style="color: #B45309; font-weight: 600;">Inquiry Quote</span><div style="font-size: 0.7rem; color: #888;">Confirmation Pending</div>`}
-                            </td>
-                            <td>
-                                <select class="status-badge-select ${statusClass}" data-select-order-id="${escapeHtml(o.orderId)}">
-                                    <option value="Pending Confirmation" ${currentStatus === 'Pending Confirmation' ? 'selected' : ''}>Pending Confirmation</option>
-                                    <option value="Confirmed" ${currentStatus === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-                                    <option value="In Packaging" ${currentStatus === 'In Packaging' ? 'selected' : ''}>In Packaging</option>
-                                    <option value="Dispatched" ${currentStatus === 'Dispatched' ? 'selected' : ''}>Dispatched</option>
-                                    <option value="Delivered" ${currentStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                                    <option value="Cancelled" ${currentStatus === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                                </select>
-                            </td>
-                            <td>
-                                <div class="table-actions-cell">
-                                    <button type="button" class="btn-table-action btn-action-pdf" data-btn-dl="${escapeHtml(o.orderId)}" title="Download Printable A4 PDF">
-                                        📥 PDF
-                                    </button>
-                                    <button type="button" class="btn-table-action btn-action-print" data-btn-print="${escapeHtml(o.orderId)}" title="Print PDF Sheet">
-                                        🖨️ Print
-                                    </button>
-                                    <a href="${window.PaloraPDFOrder.getWhatsAppStatusUpdateUrl(o.orderId, o.status) || '#'}" target="_blank" rel="noopener noreferrer" class="btn-table-action btn-action-wa" title="Send WhatsApp status update to customer">
-                                        💬 Notify
-                                    </a>
-                                    <button type="button" class="btn-table-action btn-action-view" data-btn-view="${escapeHtml(o.orderId)}" title="View complete customer details & order notes">
-                                        👁️ View
-                                    </button>
-                                    <button type="button" class="btn-table-action btn-action-del" data-btn-del="${escapeHtml(o.orderId)}" title="Delete record">
-                                        🗑️
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-
-                attachTableListeners();
-            }
-
-            function getStatusClass(status) {
-                const s = String(status || '').toLowerCase();
-                if (s === 'confirmed') return 'status-confirmed';
-                if (s === 'in packaging') return 'status-packaging';
-                if (s === 'dispatched') return 'status-dispatched';
-                if (s === 'delivered') return 'status-delivered';
-                if (s === 'cancelled') return 'status-cancelled';
-                return 'status-pending';
-            }
-
-            function attachTableListeners() {
-                // Status select change
-                tableBody.querySelectorAll('[data-select-order-id]').forEach(function (sel) {
-                    sel.addEventListener('change', function () {
-                        const id = sel.getAttribute('data-select-order-id');
-                        const newSt = sel.value;
-                        window.PaloraPDFOrder.updateOrderStatus(id, newSt);
-                        sel.className = 'status-badge-select ' + getStatusClass(newSt);
-                        renderDashboard();
-                        if (window.PaloraCart) {
-                            window.PaloraCart.showToast(`Order #${id} updated to "${newSt}"`);
-                        }
-                    });
-                });
-
-                // Download PDF
-                tableBody.querySelectorAll('[data-btn-dl]').forEach(function (btn) {
-                    btn.addEventListener('click', function () {
-                        const id = btn.getAttribute('data-btn-dl');
-                        window.PaloraPDFOrder.downloadPDF(id);
-                    });
-                });
-
-                // Print PDF
-                tableBody.querySelectorAll('[data-btn-print]').forEach(function (btn) {
-                    btn.addEventListener('click', function () {
-                        const id = btn.getAttribute('data-btn-print');
-                        window.PaloraPDFOrder.printPDF(id);
-                    });
-                });
-
-                // View Details Modal
-                tableBody.querySelectorAll('[data-btn-view]').forEach(function (btn) {
-                    btn.addEventListener('click', function () {
-                        const id = btn.getAttribute('data-btn-view');
-                        openOrderDetailsModal(id);
-                    });
-                });
-
-                // Delete order
-                tableBody.querySelectorAll('[data-btn-del]').forEach(function (btn) {
-                    btn.addEventListener('click', function () {
-                        const id = btn.getAttribute('data-btn-del');
-                        if (confirm(`Are you sure you want to delete order inquiry #${id}? This cannot be undone.`)) {
-                            window.PaloraPDFOrder.deleteOrder(id);
-                            renderDashboard();
-                        }
-                    });
-                });
-            }
-
-            // Order Details Modal
-            const detailModal = document.getElementById('adminOrderDetailsModal');
-            const detailModalTitle = document.getElementById('detailModalTitle');
-            const detailModalDate = document.getElementById('detailModalDate');
-            const detailModalBody = document.getElementById('detailModalBody');
-            const detailModalActionsLeft = document.getElementById('detailModalActionsLeft');
-
-            function openOrderDetailsModal(orderId) {
-                const order = window.PaloraPDFOrder.getOrderById(orderId);
-                if (!order) return;
-
-                const cust = order.customer || {};
-                const items = order.items || [];
-
-                detailModalTitle.textContent = `Order Inquiry: ${order.orderId}`;
-                detailModalDate.textContent = `Submitted: ${order.formattedDate} • Status: ${order.status}`;
-
-                let totalQty = 0;
-                let totalPrice = 0;
-                let hasPrices = false;
-
-                const itemsRows = items.map(function (it, idx) {
-                    const q = parseInt(it.quantity, 10) || 1;
-                    totalQty += q;
-                    const parsed = window.PaloraPDFOrder.parseProductDetails(it);
-                    let priceText = 'Inquiry Quote';
-                    let subText = 'Inquiry Quote';
-                    if (typeof it.price === 'number' && !isNaN(it.price)) {
-                        hasPrices = true;
-                        totalPrice += (it.price * q);
-                        priceText = `₹${it.price.toLocaleString('en-IN')}`;
-                        subText = `₹${(it.price * q).toLocaleString('en-IN')}`;
-                    }
-
-                    return `
-                        <tr style="border-bottom: 1px solid #EEE;">
-                            <td style="padding: 8px;">${idx + 1}</td>
-                            <td style="padding: 8px;"><strong>${escapeHtml(parsed.cleanTitle)}</strong><br><small style="color:#666;">${escapeHtml(parsed.categoryName)}</small></td>
-                            <td style="padding: 8px;">${escapeHtml(parsed.size)}</td>
-                            <td style="padding: 8px;">${escapeHtml(parsed.finish)}</td>
-                            <td style="padding: 8px; text-align: center;">${parsed.orderQty} ${parsed.packMultiplier > 1 ? '<br><small>(' + parsed.totalPieces + ' pcs)</small>' : 'pc'}</td>
-                            <td style="padding: 8px; text-align: right;">${priceText}</td>
-                            <td style="padding: 8px; text-align: right;"><strong>${subText}</strong></td>
-                        </tr>
-                    `;
-                }).join('');
-
-                detailModalBody.innerHTML = `
-                    <div class="order-modal-details-grid">
-                        <div style="background: #FAF7F2; padding: 14px 16px; border-radius: 8px; border: 1px solid #E6DED2;">
-                            <h4 style="font-size: 0.84rem; color: #3B2215; margin-bottom: 8px;">Customer &amp; Contact</h4>
-                            <div style="font-size: 0.82rem; line-height: 1.5;">
-                                <div><strong>Name:</strong> ${escapeHtml(cust.fullName || cust.name || cust.customer_name || 'Not specified')}</div>
-                                <div><strong>Mobile:</strong> +91 ${escapeHtml(cust.mobileNumber || cust.mobile || cust.phone || cust.customer_mobile || 'Not specified')}</div>
-                                <div><strong>City:</strong> ${escapeHtml(cust.city || 'Not specified')}</div>
-                                <div><strong>State:</strong> ${escapeHtml(cust.state || 'Not specified')}</div>
-                                <div><strong>PIN Code:</strong> ${escapeHtml(cust.pincode || cust.pin || 'Not specified')}</div>
-                            </div>
-                        </div>
-                        <div style="background: #FAF7F2; padding: 14px 16px; border-radius: 8px; border: 1px solid #E6DED2;">
-                            <h4 style="font-size: 0.84rem; color: #3B2215; margin-bottom: 8px;">Complete Delivery Address</h4>
-                            <div style="font-size: 0.82rem; line-height: 1.45; color: #333;">
-                                ${escapeHtml(cust.address || cust.deliveryAddress || cust.delivery_address || 'Not specified')}
-                            </div>
-                            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #E2D7C5;">
-                                <strong style="font-size: 0.78rem; color: #B45309;">Order Notes:</strong>
-                                <p style="font-size: 0.8rem; color: #555; margin: 2px 0 0;">${escapeHtml(cust.notes || 'No special notes provided.')}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4 style="font-size: 0.88rem; color: #3B2215; margin-bottom: 8px;">Ordered Product Line Items</h4>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 14px;">
-                        <thead>
-                            <tr style="background: #2C1E14; color: #FFF;">
-                                <th style="padding: 8px;">#</th>
-                                <th style="padding: 8px;">Product</th>
-                                <th style="padding: 8px;">Size</th>
-                                <th style="padding: 8px;">Finish</th>
-                                <th style="padding: 8px; text-align: center;">Qty</th>
-                                <th style="padding: 8px; text-align: right;">Unit Price</th>
-                                <th style="padding: 8px; text-align: right;">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsRows}
-                        </tbody>
-                    </table>
-
-                    <div style="background: #F8F5F0; padding: 12px 16px; border-radius: 8px; border: 1px solid #E2D7C5; font-size: 0.82rem; display: flex; justify-content: space-between;">
-                        <span><strong>Total Distinct:</strong> ${items.length} items (${totalQty} packs)</span>
-                        <span><strong>Estimated Total:</strong> ${hasPrices ? '₹' + totalPrice.toLocaleString('en-IN') : 'Inquiry Quote Confirmation Pending'}</span>
-                    </div>
-                `;
-
-                detailModalActionsLeft.innerHTML = `
-                    <button type="button" class="btn-modal-download-pdf" id="btnModalDetailDL" style="padding: 8px 16px; font-size: 0.82rem;">
-                        📥 Download PDF
-                    </button>
-                    <button type="button" class="btn-modal-close" id="btnModalDetailPrint" style="padding: 8px 16px; font-size: 0.82rem;">
-                        🖨️ Print PDF
-                    </button>
-                    <a href="${window.PaloraPDFOrder.getWhatsAppStatusUpdateUrl(order.orderId, order.status) || '#'}" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; background: #10B981; color: #FFF; text-decoration: none; display: inline-flex; align-items: center;">
-                        💬 WhatsApp Customer
-                    </a>
-                `;
-
-                detailModal.classList.add('visible');
-                document.body.classList.add('modal-open');
-
-                detailModal.querySelector('#btnModalDetailDL')?.addEventListener('click', function () {
-                    window.PaloraPDFOrder.downloadPDF(orderId);
-                });
-                detailModal.querySelector('#btnModalDetailPrint')?.addEventListener('click', function () {
-                    window.PaloraPDFOrder.printPDF(orderId);
-                });
-            }
-
-            function closeDetailsModal() {
-                detailModal.classList.remove('visible');
-                document.body.classList.remove('modal-open');
-            }
-
-            document.getElementById('btnCloseDetailsModal')?.addEventListener('click', closeDetailsModal);
-            document.getElementById('btnCloseDetailsBottom')?.addEventListener('click', closeDetailsModal);
-
-            // Live Search & Filter Events with Debouncing
-            let searchTimeout = null;
-            if (searchBox) {
-                searchBox.addEventListener('input', function () {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(renderDashboard, 250);
-                });
-            }
-            if (statusSelect) {
-                statusSelect.addEventListener('change', renderDashboard);
-            }
-
-            // Toolbar Actions
-            document.getElementById('btnRefreshList')?.addEventListener('click', renderDashboard);
-            document.getElementById('btnExportCSV')?.addEventListener('click', function () {
-                window.PaloraPDFOrder.exportOrdersCSV();
-            });
-            document.getElementById('btnExportJSON')?.addEventListener('click', function () {
-                window.PaloraPDFOrder.exportOrdersJSON();
-            });
-
-            // Notification Tool Event Handlers
-            const btnEnableNotif = document.getElementById('btnEnableBrowserNotif');
-            if (btnEnableNotif) {
-                if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-                    btnEnableNotif.textContent = '✓ Desktop Alerts Enabled';
-                    btnEnableNotif.style.backgroundColor = '#166534';
-                }
-                btnEnableNotif.addEventListener('click', function () {
-                    if (typeof Notification !== 'undefined') {
-                        Notification.requestPermission().then(function (perm) {
-                            if (perm === 'granted') {
-                                btnEnableNotif.textContent = '✓ Desktop Alerts Enabled';
-                                btnEnableNotif.style.backgroundColor = '#166534';
-                                new Notification('Palora Homes Alerts Enabled', {
-                                    body: 'You will receive immediate desktop alerts when new customer order inquiries arrive.',
-                                    icon: 'assets/images/heart-3d-led-lamp.png'
-                                });
-                            }
-                        });
-                    } else {
-                        alert('Your browser does not support desktop notifications.');
-                    }
-                });
-            }
-
-            document.getElementById('btnTestNotification')?.addEventListener('click', function () {
-                const sampleRecord = {
-                    orderId: 'PH-TEST-ALERT',
-                    createdAt: new Date().toISOString(),
-                    customer: { fullName: 'Test Customer', mobileNumber: '9319862081', city: 'Storefront', state: 'Pan-India' },
-                    items: [{ title: 'Artisanal Wall Clock', quantity: 1 }]
-                };
-                const res = window.PaloraPDFOrder.notifyBusinessOwner(sampleRecord);
-                alert(`Test Alert Dispatched!\nBrowser Notification: ${res.browserNotificationSent ? 'Active (Alert shown)' : 'Requires Permission'}\nWebhook: ${res.webhookConfigured ? 'Dispatched' : 'No Webhook URL set in config.js'}`);
-            });
-
-            function escapeHtml(str) {
-                return String(str || '').replace(/[&<>"']/g, function (m) {
-                    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
-                });
-            }
-
-            // Global order update listener
-            window.addEventListener('palora:order-updated', renderDashboard);
-
-            // Initialize
-            document.addEventListener('DOMContentLoaded', checkAuth);
-        })();
-    </script>
+    <script src="js/admin-dashboard.js"></script>
 </body>
 </html>

@@ -352,3 +352,116 @@ DROP POLICY IF EXISTS "Admins can update and delete product images" ON storage.o
 CREATE POLICY "Admins can update and delete product images" ON storage.objects
     FOR ALL TO authenticated
     USING (bucket_id = 'product-images' AND public.is_admin());
+
+-- ====================================================================
+-- 9. CART_ACTIVITY TABLE (Real-Time Customer Shopping Cart Tracking)
+-- ====================================================================
+-- Stores live customer carts (both anonymous guest sessions and logged-in users)
+CREATE TABLE IF NOT EXISTS public.cart_activity (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id TEXT UNIQUE NOT NULL,                           -- Anonymous session ID (e.g. 'guest_abc123')
+    customer_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    customer_name TEXT,                                        -- Populated only when provided by customer
+    customer_phone TEXT,                                       -- Populated only when provided by customer
+    customer_email TEXT,                                       -- Populated only when provided by customer
+    items JSONB NOT NULL DEFAULT '[]'::jsonb,                  -- Full cart items array with titles, images, quantities, specs
+    total_items INT NOT NULL DEFAULT 0,
+    cart_total NUMERIC(10, 2) DEFAULT 0,
+    last_updated TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_cart_activity_session_id ON public.cart_activity (session_id);
+CREATE INDEX IF NOT EXISTS idx_cart_activity_last_updated ON public.cart_activity (last_updated DESC);
+
+ALTER TABLE public.cart_activity ENABLE ROW LEVEL SECURITY;
+
+-- Allow anonymous visitors and authenticated customers to save/update their cart snapshot
+DROP POLICY IF EXISTS "Public can upsert cart activity" ON public.cart_activity;
+CREATE POLICY "Public can upsert cart activity" ON public.cart_activity
+    FOR ALL TO anon, authenticated
+    USING (true)
+    WITH CHECK (true);
+
+-- Store Administrators have full read access to inspect active customer carts
+DROP POLICY IF EXISTS "Admins can view cart activity" ON public.cart_activity;
+CREATE POLICY "Admins can view cart activity" ON public.cart_activity
+    FOR SELECT TO authenticated
+    USING (public.is_admin());
+
+-- Store Administrators can delete abandoned or completed cart sessions
+DROP POLICY IF EXISTS "Admins can delete cart activity" ON public.cart_activity;
+CREATE POLICY "Admins can delete cart activity" ON public.cart_activity
+    FOR DELETE TO authenticated
+    USING (public.is_admin());
+
+DROP POLICY IF EXISTS "Service role full access to cart activity" ON public.cart_activity;
+CREATE POLICY "Service role full access to cart activity" ON public.cart_activity
+    FOR ALL TO service_role
+    USING (true) WITH CHECK (true);
+
+-- ====================================================================
+-- 10. OFFICIAL 23 PALORA HOMES SIGNATURE PRODUCTS SEED (IDEMPOTENT)
+-- ====================================================================
+-- Safely seeds all 23 signature handcrafted products matching config.js.
+-- Never creates duplicates because of ON CONFLICT (id).
+INSERT INTO public.products (id, category_id, category_name, title, subtitle, specs, description, price, stock_quantity, is_available, status, highlights, image_url, display_order)
+VALUES
+    -- Wall Decor (3 Products)
+    ('wall-decor-deer', 'wall-decor', 'Wall Decor', 'Deer Silhouette Floating Wall Shelves', 'Artisanal Living Accent & Planter Perches (Pair)', '6" x 8" (Pair) • Matte Black Finish', 'Artisanal pair of black deer head silhouette wall shelves crafted to display miniature succulent pots, tea lights, or botanical accents with organic elegance.', NULL, 15, TRUE, 'Available for Order', '["Set of 2 Shelves", "Planter Display (6\" x 8\")", "Solid Wall Mount"]'::jsonb, 'assets/images/deer-floating-shelves.jpg', 1),
+    ('wall-decor-bird-circle', 'wall-decor', 'Wall Decor', 'Circular Bird Silhouette Wall Shelves', 'Solid Teak Finish Wall Sconces & Display Perches (Pair)', 'Pair (2 Pcs) • Natural Hardwood Grain', 'Handcrafted pair of circular wooden wall accent shelves featuring a precision cutout bird perched on a leafy branch, complete with a sturdy display ledge for small botanicals and candles.', NULL, 12, TRUE, 'Available for Order', '["Pair of 2 Shelves", "Carved Bird on Branch", "Solid Hardwood Craft"]'::jsonb, 'assets/images/circular-bird-wall-shelves.png', 2),
+    ('wall-decor-diamond-sunburst', 'wall-decor', 'Wall Decor', 'Geometric Sunburst Diamond Wall Shelves', 'Boho Radial Lattice Shelves & Planter Ledges (Pair)', 'Pair (2 Pcs) • Laser Cut Engineered Wood', 'Striking diamond-silhouette wall shelves adorned with radial sunburst geometric cutouts and a curved wooden ledge ideal for potted succulents, air plants, and decor curios.', NULL, 10, TRUE, 'Available for Order', '["Set of 2 Shelves", "Radial Sunburst Design", "Succulent Planter Perch"]'::jsonb, 'assets/images/diamond-sunburst-wall-shelves.png', 3),
+
+    -- Wall Clock (5 Products)
+    ('wall-clock-bird-wwc102', 'wall-clock', 'Wall Clock', 'Bird Silhouette Geometric Wall Clock', 'Dual Perched Birds & Lattice Horizon', '16" x 6" (Single) • Natural Solid Wood', 'Contemporary rectangular wooden wall clock uniting warm natural wood grain with modern geometric lattice cutouts and two perched bird silhouettes. Features minimalist 12, 9, 6 bold numerals and a silent quartz precision movement.', 1899.00, 8, TRUE, 'Available for Order', '["16\" x 6\" Size", "Dual Bird Silhouettes", "Geometric Horizon Lattice", "Silent Quartz Movement"]'::jsonb, 'assets/images/wooden-bird-wall-clock.jpg', 4),
+    ('wall-clock-deer-pendulum-wwc102', 'wall-clock', 'Wall Clock', 'Nordic Deer Antler Pendulum Wall Clock', 'Minimalist Dial, Antler Crown & Swinging Pendulum', '12" x 12" (Single) • Silent Quartz Movement', 'Scandinavian-style modern wall clock boasting a minimalist open-ring white dial, rich walnut center column, bold sculptural black deer antlers, and a calming swinging wooden pendulum. Engineered with ultra-quiet quartz precision.', 2199.00, 6, TRUE, 'Available for Order', '["12\" x 12\" Size", "Swinging Pendulum", "Sculptural Deer Antlers", "Silent Quartz Movement"]'::jsonb, 'assets/images/wall-clock-deer-pendulum.jpg', 5),
+    ('wall-clock-modern-oval', 'wall-clock', 'Wall Clock', 'Nordic Minimalist Oval Wooden Wall Clock', 'Slim Stadium Silhouette with Natural Wood Face & Matte Black Rim', '18" x 6" • Natural Wood & Matte Black Rim', 'Sleek, architectural oval wall clock featuring a warm natural wood veneer face, bold minimalist 12 and 6 stencil typography, matte black border, and silent sweep quartz movement.', 1799.00, 10, TRUE, 'Available for Order', '["18\" x 6\" Slim Oval Design", "Natural Hardwood Texture", "Silent Sweep Quartz Movement", "Modern Architectural Accent"]'::jsonb, 'assets/images/wall-clock-modern-oval-wood.png', 6),
+    ('wall-clock-lion-silhouette', 'wall-clock', 'Wall Clock', 'Majestic Lion Mane Silhouette Wall Clock', 'Bold Wildlife Profile Clock with Flowing Mane & Quiet Quartz Hands', '12" x 12" • Matte Black Engineered Craft • Quiet Movement', 'Statement wildlife silhouette wall clock capturing the noble profile of a lion with an intricately sculpted flowing mane framing a clean 12-hour numeral dial, paired with high-contrast white hands and a vibrant red second needle.', 1599.00, 14, TRUE, 'Available for Order', '["12\" x 12\" Statement Diameter", "Sculpted Lion Head Profile", "Silent Quartz Mechanism", "High-Contrast Dial & Red Needle"]'::jsonb, 'assets/images/wall-clock-lion-silhouette.png', 7),
+    ('wall-clock-roman-scalloped-teak', 'wall-clock', 'Wall Clock', 'Scalloped Geometric Roman Wooden Wall Clock', 'Dual-Tone White & Teak Finish Contemporary Dial', '14" Diameter • Roman Numerals • Teak & White Finish', 'Striking 14-inch geometric wall clock featuring an eye-catching scalloped outer frame in crisp white, contrasting rich natural teak wood grain ray inserts with laser-cut Roman numerals and precision silent sweep hands.', 2499.00, 5, TRUE, 'Available for Order', '["14\" Diameter Statement Clock", "Scalloped Geometric White Rim", "Natural Teak Grain Inserts", "Silent Sweep Quartz Movement"]'::jsonb, 'assets/images/wall-clock-roman-scalloped-teak.png', 8),
+
+    -- Night Lamp (3 Products)
+    ('night-lamp-lakshmi-3d', 'night-lamp', 'Night Lamp', 'Goddess Lakshmi 3D LED Sacred Lamp', 'Divine Lotus Acrylic Illusion & Violet Glow', 'Wall Plug-in • Optical Acrylic • Violet LED', 'Exquisitely etched optical acrylic 3D night light depicting Goddess Lakshmi seated on an auspicious lotus throne with prosperity blessings. Plugs directly into standard wall sockets to radiate a peaceful violet ambient glow in your mandir, bedroom, or living sanctuary.', 899.00, 20, TRUE, 'Available for Order', '["3D Optical Illusion", "Sacred Lotus Throne", "Direct Wall Plug-in", "Peaceful Violet Glow"]'::jsonb, 'assets/images/lakshmi-3d-led-lamp.png', 9),
+    ('night-lamp-heart-3d', 'night-lamp', 'Night Lamp', '3D Optical Illusion Heart LED Lamp', 'Romantic Wireframe Mesh & Crimson Tabletop Glow', 'Tabletop Stand • Crimson Red LED • 3D Illusion', 'Mesmerizing 3D optical illusion desk lamp showcasing an intricately laser-etched geometric wireframe heart on crystal-clear acrylic. Casts an enchanting, romantic crimson-red ambient glow across your bedside, workspace, or living decor.', 799.00, 18, TRUE, 'Available for Order', '["3D Wireframe Heart", "Romantic Crimson Glow", "Bedside Tabletop Stand", "Laser-Etched Acrylic"]'::jsonb, 'assets/images/heart-3d-led-lamp.png', 10),
+    ('night-lamp-iloveyou-3d', 'night-lamp', 'Night Lamp', '"I LOVE YOU" 3D Wireframe Hearts LED Night Lamp', 'Mesmerizing Optical Illusion Acrylic with Violet Ambient Glow', 'Wall Plug-in • Laser-Etched Acrylic • Violet/Purple Glow', 'Enchanting direct wall socket plug-in night light boasting 3 laser-etched geometric 3D wireframe hearts with floating mini hearts and "I LOVE YOU" typography, casting a serene violet/purple ambient aura.', 849.00, 16, TRUE, 'Available for Order', '["3D Wireframe Hearts Illusion", "Direct Wall Socket Plug-in", "Gentle Violet/Purple LED Glow", "Energy Efficient & Low Heat"]'::jsonb, 'assets/images/night-lamp-iloveyou-3d-hearts.png', 11),
+
+    -- Wall Hanging (3 Products)
+    ('wall-hanging-ganesha-wh006', 'wall-hanging', 'Wall Hanging', 'Lord Ganesha Evil Eye Sacred Wall Hanging', 'Auspicious Nazar Battu & Stained Glass Art', '7" x 18" (Single) • Stained Glass Medallions • Evil Eye Amulets', 'Sacred handcrafted wall hanging uniting Lord Ganesha with protective evil eye amulets in radiant turquoise and royal blue mosaic glass medallion styling.', 699.00, 25, TRUE, 'Available for Order', '["7\" x 18\" Size", "Lord Ganesha Art", "Mosaic Glass Medallions", "Auspicious Nazar Battu"]'::jsonb, 'assets/images/ganesha-evil-eye-hanging.jpg', 12),
+    ('wall-hanging-gayatri-mantra', 'wall-hanging', 'Wall Hanging', 'Sacred Gayatri Mantra Wooden Slat Hanging', 'Devanagari Vedic Chants in Multicolored Wooden Plaques', 'Multi-Tier Wooden Slat • Jute Hanging Rope', 'Vibrant multi-slat wooden wall hanging featuring the sacred Gayatri Mantra in graceful Hindi Devanagari calligraphy across six colorful weathered wood plaques joined by rustic jute rope.', 999.00, 15, TRUE, 'Available for Order', '["Gayatri Mantra Slats", "Devanagari Calligraphy", "Multi-Tier Wooden Plaques", "Positive Vastu Energy"]'::jsonb, 'assets/images/wall-hanging-gayatri-mantra-slats.png', 13),
+    ('wall-hanging-krishna-mantra', 'wall-hanging', 'Wall Hanging', 'Lord Krishna Mantra Wooden Wall Hanging', 'Sacred Shloka Wooden Panels with Peacock Feather Drops', 'Multi-Tier Wooden Slats • Sacred Shloka • Jute Rope', 'Exquisite multi-tiered sacred wall hanging featuring Lord Krishna playing his divine flute surrounded by a floral peacock mandala, connected with authentic jute rope to two wooden shloka panels inscribed with Om Krishnaya Vasudevaya and 4 graceful peacock feather drops.', 1199.00, 12, TRUE, 'Available for Order', '["Lord Krishna Mandala", "Sacred Sanskrit Shlokas", "Peacock Feather Drops", "Jute Rope Wall Hanging"]'::jsonb, 'assets/images/krishna-mantra-wall-hanging.png', 14),
+
+    -- Car Dashboard Decore (7 Products)
+    ('car-dashboard-murugan-acd019', 'car-dashboard', 'Car Dashboard Decore', 'Lord Murugan Acrylic Car Dashboard Frame', 'Divine Kartikeya & Mayur with Sacred Vel', '4" x 3" (Single) • Beveled Crystal Acrylic • Car Mount', 'Crystal-clear beveled acrylic car dashboard frame featuring Lord Murugan (Kartikeya) with his divine peacock and sacred Vel spear. Includes a stable adhesive peel-and-stick base for secure vehicle placement.', 449.00, 30, TRUE, 'Available for Order', '["4\" x 3\" Size", "Peel & Stick Car Base", "Lord Murugan Deity", "Beveled Crystal Acrylic"]'::jsonb, 'assets/images/car-dashboard-murugan-acd019.jpg', 15),
+    ('car-dashboard-hanuman-acd004', 'car-dashboard', 'Car Dashboard Decore', 'Lord Hanuman Kneeling Ashirwad Frame', '3D Sculpted Relief with Gada & Ram Blessing', '4" x 3" (Single) • Textured 3D Relief • Crystal Acrylic', 'Intricately detailed sculpted 3D relief depiction of Lord Hanuman kneeling in reverence holding golden Gada with protective blessing hand inscribed with "Jai Shree Ram", encased in optical crystal acrylic.', 499.00, 25, TRUE, 'Available for Order', '["4\" x 3\" Size", "Jai Shree Ram Blessing", "Sculpted Relief Finish", "Crystal Acrylic Frame"]'::jsonb, 'assets/images/car-dashboard-hanuman-acd004.png', 16),
+    ('car-dashboard-hanuman-acd009', 'car-dashboard', 'Car Dashboard Decore', 'Lord Hanuman Meditating ''RAM'' Crimson Frame', 'Serene Dhyan Mudra with Sacred RAM Typography', '4" x 3" (Single) • Premium Optical Acrylic • Anti-Glare', 'Striking meditative silhouette of Lord Hanuman seated in deep dhyan posture framed against sacred bold "RAM" Devanagari typography and a rich glowing crimson red aura.', 499.00, 20, TRUE, 'Available for Order', '["4\" x 3\" Size", "Sacred ''RAM'' Typography", "Meditative Dhyan Mudra", "Premium Optical Acrylic"]'::jsonb, 'assets/images/car-dashboard-hanuman-acd009.png', 17),
+    ('car-dashboard-hanuman-acd010', 'car-dashboard', 'Car Dashboard Decore', 'Lord Hanuman Radiant Warrior Acrylic Frame', 'Majestic Veer Hanuman with Golden Gada & Solar Aura', '4" x 3" (Single) • Crystal Acrylic Stand • Vehicle Mount', 'Majestic depiction of Veer Hanuman standing resolute with his golden Gada weapon amidst a blazing cosmic solar aura, protected in crystal-grade beveled acrylic.', 499.00, 20, TRUE, 'Available for Order', '["4\" x 3\" Size", "Cosmic Solar Aura", "Veer Hanuman Energy", "Vehicle Dashboard Mount"]'::jsonb, 'assets/images/car-dashboard-hanuman-acd010.jpg', 18),
+    ('car-dashboard-hanuman-acd007', 'car-dashboard', 'Car Dashboard Decore', 'Meditating Lord Hanuman Acrylic Car Dashboard Frame', 'Cosmic Flame Aura & Dhyan Mudra in Beveled Crystal Frame', '4" x 3" • Crystal Acrylic Frame • Model ACD007', 'Awe-inspiring car dashboard deity frame portraying Lord Hanuman in serene meditative dhyan posture surrounded by a sacred fiery cosmic halo, protected inside an optical crystal-clear acrylic stand with secure dashboard mounting.', 499.00, 22, TRUE, 'Available for Order', '["4\" x 3\" Size (ACD007)", "Meditating Hanuman in Dhyan", "Crystal Beveled Acrylic Stand", "Firm Peel & Stick Car Base"]'::jsonb, 'assets/images/car-dashboard-hanuman-acd007.jpg', 19),
+    ('car-dashboard-indian-flag-cd019', 'car-dashboard', 'Car Dashboard Decore', 'Patriotic Indian Tiranga & Monuments Car Dashboard Stand', 'Ashoka Chakra, India Gate & Taj Mahal Tricolor Stand', '3" x 4" • Acrylic & Wood Stand • Model CD019', 'Proud patriotic car dashboard ornament highlighting the waving Indian National Flag, Ashoka Chakra, India Gate, and Taj Mahal silhouettes mounted upon an ornate wooden pedestal with bold tricolor "INDIAN" lettering.', 399.00, 35, TRUE, 'Available for Order', '["3\" x 4\" Size (CD019)", "Waving Tiranga & Ashoka Chakra", "India Gate & Taj Mahal Silhouettes", "Carved Wooden Pedestal Base"]'::jsonb, 'assets/images/car-dashboard-indian-flag-cd019.png', 20),
+    ('car-dashboard-shrinathji-cd026', 'car-dashboard', 'Car Dashboard Decore', 'Mere Shrinathji Meri Duniya Car Dashboard Frame', 'Divine Shrinathji Face & Kamadhenu Cows Wooden Stand', '4" x 3" • Carved Wood Stand • Model CD026', 'Divine handcrafted car dashboard centerpiece showcasing the sacred countenance of Shrinathji with jewel-encrusted peacock mukut, flanked by auspicious golden Kamadhenu cows on a rich textured oval plaque with "Mere Shrinathji, Meri Duniya" pedestal base.', 549.00, 18, TRUE, 'Available for Order', '["4\" x 3\" Size (CD026)", "Shrinathji Sacred Face & Mukut", "Twin Kamadhenu Holy Cows", "Carved Dark Pedestal Stand"]'::jsonb, 'assets/images/car-dashboard-shrinathji-cd026.jpg', 21),
+
+    -- Key Holder (2 Products)
+    ('key-holder-family-birds-kh082', 'key-holder', 'Key Holder', '"Family" Bird Silhouette Wooden Key Holder', 'Charming Twin Birds on Leafy Branch with 6 Metal Key Hooks', '6" x 8" (kh082) • Engineered Wood & 6 Metal Hooks', 'Heartwarming handcrafted wall-mount key organizer featuring graceful twin songbirds perched on a leafy branch above bold "Family" lettering, fitted with 6 heavy-duty silver ring hooks.', 599.00, 16, TRUE, 'Available for Order', '["6\" x 8\" Compact Size (kh082)", "6 Heavy-Duty Metal Key Hooks", "Twin Songbirds Silhouette", "Easy Wall Mounting"]'::jsonb, 'assets/images/key-holder-family-birds-kh082.png', 22),
+    ('key-holder-home-heart-kh083', 'key-holder', 'Key Holder', '"Home" Sweet Heart Silhouette Key Holder', 'House Contour with Heart Window Cutout & 5 Heavy-Duty Hooks', '6" x 8" (kh083) • Engineered Wood & 5 Metal Hooks', 'Charming house-silhouette entryway key organizer showcasing an open heart window and elegant script "Home" lettering, complete with 5 sturdy curved metal hooks for car keys, house keys, and lanyards.', 599.00, 14, TRUE, 'Available for Order', '["6\" x 8\" Dimensions (kh083)", "5 Sturdy Silver Metal Hooks", "Heart & House Silhouette", "Sturdy Wall Flush Mount"]'::jsonb, 'assets/images/key-holder-home-heart-kh083.png', 23)
+ON CONFLICT (id) DO UPDATE SET
+    title = EXCLUDED.title,
+    subtitle = EXCLUDED.subtitle,
+    category_id = EXCLUDED.category_id,
+    category_name = EXCLUDED.category_name,
+    specs = EXCLUDED.specs,
+    description = EXCLUDED.description,
+    price = COALESCE(public.products.price, EXCLUDED.price),
+    image_url = EXCLUDED.image_url;
+
+-- ====================================================================
+-- 11. CONFIRM ADMIN EMAIL & ASSIGN STORE ADMINISTRATOR ROLE
+-- ====================================================================
+UPDATE auth.users 
+SET email_confirmed_at = NOW() 
+WHERE email = 'palorahomes@gmail.com';
+
+INSERT INTO public.profiles (id, email, full_name, role)
+SELECT id, email, COALESCE(raw_user_meta_data->>'full_name', 'Store Admin'), 'admin'
+FROM auth.users
+WHERE email = 'palorahomes@gmail.com'
+ON CONFLICT (id) DO UPDATE SET role = 'admin';
+
+

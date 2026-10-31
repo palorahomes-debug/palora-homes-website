@@ -43,8 +43,50 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
                 this.updateBadges();
                 window.dispatchEvent(new CustomEvent('palora:cart-updated', { detail: { cart: cart } }));
+                this.syncCartActivity(cart);
             } catch (err) {
                 console.error('PaloraCart: Failed to save cart to localStorage', err);
+            }
+        },
+
+        /**
+         * Anonymous session identifier for guest cart tracking
+         * @returns {string}
+         */
+        getSessionId: function () {
+            try {
+                let sid = localStorage.getItem('palora_guest_session_id');
+                if (!sid) {
+                    sid = 'guest_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
+                    localStorage.setItem('palora_guest_session_id', sid);
+                }
+                return sid;
+            } catch (e) {
+                return 'guest_anon';
+            }
+        },
+
+        /**
+         * Debounced real-time cart tracking synchronization to Supabase Cloud
+         * @param {Array} cart
+         */
+        syncCartActivity: function (cart) {
+            if (typeof window === 'undefined' || !window.PaloraSupabase || typeof window.PaloraSupabase.syncCartActivity !== 'function') {
+                return;
+            }
+
+            try {
+                if (this._syncDebounceTimer) {
+                    clearTimeout(this._syncDebounceTimer);
+                }
+                const self = this;
+                this._syncDebounceTimer = setTimeout(function () {
+                    const sid = self.getSessionId();
+                    const cust = self.getCustomerDetails();
+                    window.PaloraSupabase.syncCartActivity(sid, cart || [], cust);
+                }, 800);
+            } catch (e) {
+                // Silently ignore tracking sync errors
             }
         },
 
@@ -318,6 +360,7 @@
         saveCustomerDetails: function (details) {
             try {
                 localStorage.setItem('palora_customer_details', JSON.stringify(details || {}));
+                this.syncCartActivity(this.getCart());
             } catch (err) {
                 console.error('PaloraCart: Failed to save customer details', err);
             }
@@ -484,20 +527,13 @@
     // Auto-update badges when DOM is ready
     if (typeof document !== 'undefined') {
         function initCartState() {
-            // One-time placement of the 5 newly requested products into cart according to category
-            if (!localStorage.getItem('palora_cart_user_category_v2')) {
-                PaloraCart.clearCart();
-                const newProductIds = [
-                    'wall-clock-roman-scalloped-teak',
-                    'wall-hanging-krishna-mantra',
-                    'car-dashboard-hanuman-acd007',
-                    'car-dashboard-indian-flag-cd019',
-                    'car-dashboard-shrinathji-cd026'
-                ];
-                newProductIds.forEach(function (id) {
-                    PaloraCart.addToCart(id, 1);
-                });
-                localStorage.setItem('palora_cart_user_category_v2', 'true');
+            // Keep palora_cart_user_category_v2 flag preserved without automatically seeding any products
+            try {
+                if (!localStorage.getItem('palora_cart_user_category_v2')) {
+                    localStorage.setItem('palora_cart_user_category_v2', 'true');
+                }
+            } catch (e) {
+                // Ignore storage access errors
             }
             PaloraCart.updateBadges();
         }
