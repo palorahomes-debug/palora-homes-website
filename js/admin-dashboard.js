@@ -205,6 +205,47 @@
         if (DOM.loginGate) DOM.loginGate.classList.remove('hidden');
     }
 
+    let realtimeChannel = null;
+
+    function setupRealtimeSubscriptions() {
+        if (realtimeChannel) return;
+        const client = window.PaloraSupabase && window.PaloraSupabase.getClient();
+        if (!client || typeof client.channel !== 'function') return;
+
+        try {
+            realtimeChannel = client
+                .channel('palora-admin-live-orders')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'orders' },
+                    async (payload) => {
+                        console.log('PaloraAdmin: Realtime order change detected', payload);
+                        await loadOrdersData();
+                        await loadCustomersData();
+                        renderOverviewKPIs();
+                        renderOverviewRecentLists();
+                        if (state.activeSection === 'orders') renderOrdersTable();
+                        if (state.activeSection === 'customers') renderCustomersTable();
+                        if (payload.eventType === 'INSERT') {
+                            showToast(`New Order Inquiry #${(payload.new && payload.new.order_id) || ''} received!`, 'success');
+                        }
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'cart_activity' },
+                    async () => {
+                        await loadCartActivityData();
+                        if (state.activeSection === 'cart') renderCartActivityTable();
+                        renderOverviewKPIs();
+                    }
+                )
+                .subscribe();
+        } catch (e) {
+            console.warn('PaloraAdmin: Realtime subscription notice', e);
+        }
+    }
+
     function unlockDashboard() {
         if (DOM.loginGate) DOM.loginGate.classList.add('hidden');
         if (DOM.userEmail && state.currentUser) {
@@ -217,6 +258,7 @@
         }
         updateCloudStatus(true, 'Supabase Cloud Active');
         loadAllData();
+        setupRealtimeSubscriptions();
     }
 
     function updateCloudStatus(connected, message) {
@@ -340,6 +382,10 @@
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 if (confirm('Are you sure you want to log out from the Palora Admin Dashboard?')) {
+                    if (realtimeChannel && typeof realtimeChannel.unsubscribe === 'function') {
+                        realtimeChannel.unsubscribe();
+                        realtimeChannel = null;
+                    }
                     await window.PaloraSupabase.signOut();
                     state.currentUser = null;
                     state.currentProfile = null;

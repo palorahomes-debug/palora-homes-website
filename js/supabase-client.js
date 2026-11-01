@@ -455,7 +455,9 @@
                     distinct_products_count: (orderPayload.items || []).length,
                     total_packs: orderPayload.totalPacks || (orderPayload.items || []).reduce((s, it) => s + (parseInt(it.quantity, 10) || 1), 0),
                     total_pieces: orderPayload.totalPieces || 1,
-                    subtotal: typeof orderPayload.subtotal === 'number' ? orderPayload.subtotal : null,
+                    subtotal: (typeof orderPayload.subtotal === 'number' && !isNaN(orderPayload.subtotal))
+                        ? orderPayload.subtotal
+                        : ((orderPayload.items || []).reduce((s, it) => s + ((typeof it.price === 'number' ? it.price : 0) * (parseInt(it.quantity, 10) || 1)), 0) || null),
                     pricing_status: orderPayload.pricingStatus || 'Inquiry Quote — Price Confirmation Pending',
                     status_history: [
                         {
@@ -469,9 +471,7 @@
 
                 const res = await client
                     .from('orders')
-                    .insert(orderRecord)
-                    .select()
-                    .single();
+                    .insert(orderRecord);
 
                 if (res.error) {
                     console.error('PaloraSupabase: Order insertion error', res.error);
@@ -716,34 +716,66 @@
          */
         adminFetchAllOrders: async function () {
             const client = this.getClient();
-            if (!client) {
-                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
-                    return await window.PaloraPDFOrder.getOrdersFromCloud();
-                }
-                return [];
-            }
+            let cloudOrders = null;
 
-            try {
-                const res = await client
-                    .from('orders')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+            if (client) {
+                try {
+                    const res = await client
+                        .from('orders')
+                        .select('*')
+                        .order('created_at', { ascending: false });
 
-                if (res.error) {
-                    console.info('PaloraSupabase: Direct orders query failed, attempting Netlify API fallback.', res.error.message);
-                    if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
-                        return await window.PaloraPDFOrder.getOrdersFromCloud();
+                    if (!res.error && Array.isArray(res.data)) {
+                        cloudOrders = res.data;
+                    } else if (res.error) {
+                        console.info('PaloraSupabase: Direct orders query failed', res.error.message);
                     }
-                    return [];
+                } catch (err) {
+                    console.info('PaloraSupabase: Direct orders query exception', err.message);
                 }
-
-                return res.data || [];
-            } catch (err) {
-                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
-                    return await window.PaloraPDFOrder.getOrdersFromCloud();
-                }
-                return [];
             }
+
+            // Fallback 1: Netlify serverless function
+            if (!cloudOrders && window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getOrdersFromCloud === 'function') {
+                try {
+                    const netlifyOrders = await window.PaloraPDFOrder.getOrdersFromCloud();
+                    if (Array.isArray(netlifyOrders) && netlifyOrders.length > 0) {
+                        cloudOrders = netlifyOrders;
+                    }
+                } catch (e) {
+                    // Ignore netlify function error
+                }
+            }
+
+            // Fallback 2: Local browser storage orders (if cloud table not yet created)
+            if (!cloudOrders || cloudOrders.length === 0) {
+                if (window.PaloraPDFOrder && typeof window.PaloraPDFOrder.getSavedOrders === 'function') {
+                    const localList = window.PaloraPDFOrder.getSavedOrders() || [];
+                    if (localList.length > 0) {
+                        return localList.map(function (lo) {
+                            const itms = lo.items || [];
+                            return {
+                                order_id: lo.orderId,
+                                formatted_date: lo.formattedDate || lo.createdAt,
+                                status: lo.status || 'Pending Confirmation',
+                                customer_name: (lo.customer && lo.customer.fullName) || 'Store Customer',
+                                customer_mobile: (lo.customer && (lo.customer.mobileNumber || lo.customer.phone)) || '',
+                                customer_email: (lo.customer && lo.customer.email) || '',
+                                delivery_address: (lo.customer && (lo.customer.deliveryAddress || lo.customer.address)) || '',
+                                city: (lo.customer && lo.customer.city) || '',
+                                state: (lo.customer && lo.customer.state) || '',
+                                pincode: (lo.customer && lo.customer.pincode) || '',
+                                items: itms,
+                                total_pieces: itms.reduce((s, it) => s + (parseInt(it.quantity, 10) || 1), 0),
+                                subtotal: itms.reduce((s, it) => s + ((typeof it.price === 'number' ? it.price : 0) * (parseInt(it.quantity, 10) || 1)), 0),
+                                created_at: lo.createdAt || new Date().toISOString()
+                            };
+                        });
+                    }
+                }
+            }
+
+            return cloudOrders || [];
         },
 
         /**

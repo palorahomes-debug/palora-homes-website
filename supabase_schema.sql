@@ -33,9 +33,13 @@ LANGUAGE sql
 SECURITY DEFINER
 STABLE
 AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE id = auth.uid() AND role = 'admin'
+  SELECT (
+    (auth.jwt() ->> 'email' = 'palorahomes@gmail.com')
+    OR
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
   );
 $$;
 
@@ -399,6 +403,21 @@ DROP POLICY IF EXISTS "Service role full access to cart activity" ON public.cart
 CREATE POLICY "Service role full access to cart activity" ON public.cart_activity
     FOR ALL TO service_role
     USING (true) WITH CHECK (true);
+
+-- Enable Supabase Realtime Broadcasting for Orders and Cart Activity
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.orders;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.cart_activity;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+  END IF;
+END $$;
 
 -- ====================================================================
 -- 10. OFFICIAL 23 PALORA HOMES SIGNATURE PRODUCTS SEED (IDEMPOTENT)
