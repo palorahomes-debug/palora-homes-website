@@ -1864,14 +1864,7 @@ button {
 }
 
 .wa-tooltip-bubble {
-    background-color: #FFFFFF;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 12px 16px;
-    box-shadow: var(--shadow-card);
-    max-width: 260px;
-    position: relative;
-    animation: bounceIn 0.5s ease;
+    display: none !important;
 }
 
 .wa-tooltip-bubble::after {
