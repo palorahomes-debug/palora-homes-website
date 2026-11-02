@@ -85,8 +85,8 @@
                                 specs: row.specs || '',
                                 image: row.image_url,
                                 description: row.description || '',
-                                price: row.price ? parseFloat(row.price) : null,
-                                salePrice: row.sale_price ? parseFloat(row.sale_price) : null,
+                                price: null, // Inquiry Quote based catalog - all prices removed
+                                salePrice: null,
                                 stockQuantity: typeof row.stock_quantity === 'number' ? row.stock_quantity : 10,
                                 status: row.status || (row.is_available ? 'Available for Order' : 'Out of Stock'),
                                 highlights: Array.isArray(row.highlights) ? row.highlights : []

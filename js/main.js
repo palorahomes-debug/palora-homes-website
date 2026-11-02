@@ -136,11 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 .map(h => `<span class="highlight-tag">${escapeHtml(h)}</span>`)
                 .join("");
 
-            const priceHtml = (typeof item.price === 'number' && item.price > 0)
+            // Palora Homes - All product prices removed per inquiry-only store model
+            const priceHtml = (item.stockQuantity <= 3 && item.stockQuantity > 0 || isOutOfStock)
                 ? `<div class="product-price-row">
-                       <span class="product-price-val">₹${item.price.toLocaleString('en-IN')}</span>
-                       ${item.salePrice ? `<span class="product-price-original">₹${item.salePrice.toLocaleString('en-IN')}</span>` : ''}
-                       ${item.stockQuantity <= 3 && item.stockQuantity > 0 ? `<span class="product-stock-tag product-stock-low">Only ${item.stockQuantity} left</span>` : (isOutOfStock ? `<span class="product-stock-tag product-stock-out">Out of Stock</span>` : '')}
+                       ${item.stockQuantity <= 3 && item.stockQuantity > 0 ? `<span class="product-stock-tag product-stock-low">Only ${item.stockQuantity} left</span>` : ''}
+                       ${isOutOfStock ? `<span class="product-stock-tag product-stock-out">Out of Stock</span>` : ''}
                    </div>`
                 : '';
 
